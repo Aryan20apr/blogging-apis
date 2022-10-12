@@ -35,7 +35,7 @@ public class GlobalExceptionHandler {
             String message=error.getDefaultMessage();
             resp.put(fieldName,message);
         });
-        System.out.println("\nError response is \n"+resp+"\n\n");
+        //System.out.println("\nError response is \n"+resp+"\n\n");
 
         return new ResponseEntity<Map<String,String>>(resp,HttpStatus.BAD_REQUEST);
     }
