@@ -11,7 +11,7 @@ public class BloggingApisApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(BloggingApisApplication.class, args);
 	}
-
+		
 	@Bean
 	public ModelMapper modelMapper()
 	{

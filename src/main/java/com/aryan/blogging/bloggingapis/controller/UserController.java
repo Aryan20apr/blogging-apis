@@ -2,6 +2,8 @@ package com.aryan.blogging.bloggingapis.controller;
 
 import java.util.Map;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +31,7 @@ public class UserController {
     @Autowired
     private UserService userService;
     @PostMapping("/")
-    public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO userDTO)
+    public ResponseEntity<UserDTO> createUser(@Valid @RequestBody UserDTO userDTO)
     {
         UserDTO createUserDto=this.userService.createUser(userDTO);
         return new ResponseEntity<>(createUserDto,HttpStatus.CREATED);
@@ -38,7 +40,7 @@ public class UserController {
 
     //PUT- user update
     @PutMapping("/{userId}") //userId is path URI variable
-    public ResponseEntity<UserDTO> updateUser(@RequestBody UserDTO userDTO,@PathVariable("userId") Integer uid)
+    public ResponseEntity<UserDTO> updateUser(@Valid @RequestBody UserDTO userDTO,@PathVariable("userId") Integer uid)
     {
         UserDTO updatedUser=this.userService.updateUser(userDTO, uid);
         return ResponseEntity.ok(updatedUser);
