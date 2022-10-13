@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties.P
 
 import com.aryan.blogging.bloggingapis.entities.Post;
 import com.aryan.blogging.bloggingapis.payload.PostDto;
+import com.aryan.blogging.bloggingapis.payload.PostResponse;
 
 public interface PostService {
 
@@ -16,6 +17,7 @@ public interface PostService {
     void deletePost(Integer postId);
 
     List<PostDto> getAllPost();
+   
 
     PostDto getPostById(Integer postId);
 
@@ -26,6 +28,6 @@ public interface PostService {
 
     List<PostDto> searchPosts(String keyword);
 
-    List<PostDto> getAllPosts(Integer pageSize,Integer pageNumber);
+    PostResponse getAllPosts(Integer pageSize,Integer pageNumber);
     
 }

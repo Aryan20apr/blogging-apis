@@ -17,6 +17,7 @@ import com.aryan.blogging.bloggingapis.entities.Post;
 import com.aryan.blogging.bloggingapis.entities.User;
 import com.aryan.blogging.bloggingapis.exceptions.ResourceNotFoundException;
 import com.aryan.blogging.bloggingapis.payload.PostDto;
+import com.aryan.blogging.bloggingapis.payload.PostResponse;
 import com.aryan.blogging.bloggingapis.repositories.CategoryRepo;
 import com.aryan.blogging.bloggingapis.repositories.PostRepo;
 import com.aryan.blogging.bloggingapis.repositories.UserRepo;
@@ -109,15 +110,23 @@ public class PostServiceImpl implements PostService{
     }
 
     @Override
-    public List<PostDto> getAllPosts(Integer pageNumber,Integer pageSize) {
+    public PostResponse getAllPosts(Integer pageNumber,Integer pageSize) {
      
         Pageable page=PageRequest.of(pageNumber, pageSize);
         Page<Post> pagePost=this.postRepo.findAll(page);
         List<Post> allPosts=pagePost.getContent();
         List<PostDto> postDtos=allPosts.stream().map((post)-> modelMapper.map(post, PostDto.class)).collect(Collectors.toList());
         
+        PostResponse postResponse=new PostResponse();
 
-        return postDtos;
+        postResponse.setContent(postDtos);
+        postResponse.setPageNumber(pagePost.getNumber());
+        postResponse.setPageSize(pagePost.getSize());
+        postResponse.setTotalElements(pagePost.getTotalElements());
+        postResponse.setTotalPages(pagePost.getTotalPages());
+        postResponse.setLastPage(pagePost.isLast());
+
+        return postResponse;
     }
     
 }

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.aryan.blogging.bloggingapis.payload.ApiResponse;
 import com.aryan.blogging.bloggingapis.payload.PostDto;
+import com.aryan.blogging.bloggingapis.payload.PostResponse;
 import com.aryan.blogging.bloggingapis.services.PostService;
 
 @RestController
@@ -53,12 +54,19 @@ public class PostController {
     //     return new ResponseEntity<List<PostDto>>(posts, HttpStatus.OK);
     // }
 
+    // @GetMapping("/posts")
+    // public ResponseEntity<List<PostDto>> getAllPosts(
+    //         @RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
+    //         @RequestParam(value = "pageSize", defaultValue = "10", required = false) Integer pageSize) {
+    //     List<PostDto> posts = this.postService.getAllPosts(pageNumber,pageSize);
+    //     return new ResponseEntity<List<PostDto>>(posts, HttpStatus.OK);
+    // }
     @GetMapping("/posts")
-    public ResponseEntity<List<PostDto>> getAllPosts(
+    public ResponseEntity<PostResponse> getAllPosts(
             @RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
             @RequestParam(value = "pageSize", defaultValue = "10", required = false) Integer pageSize) {
-        List<PostDto> posts = this.postService.getAllPosts(pageNumber,pageSize);
-        return new ResponseEntity<List<PostDto>>(posts, HttpStatus.OK);
+        PostResponse posts = this.postService.getAllPosts(pageNumber,pageSize);
+        return new ResponseEntity<PostResponse>(posts, HttpStatus.OK);
     }
 
     @GetMapping("/posts/{postId}")
