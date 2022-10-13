@@ -2,6 +2,8 @@ package com.aryan.blogging.bloggingapis.services;
 
 import java.util.List;
 
+import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties.Pageable;
+
 import com.aryan.blogging.bloggingapis.entities.Post;
 import com.aryan.blogging.bloggingapis.payload.PostDto;
 
@@ -23,4 +25,7 @@ public interface PostService {
     List<PostDto> getPostByUser(Integer userId);
 
     List<PostDto> searchPosts(String keyword);
+
+    List<PostDto> getAllPosts(Integer pageSize,Integer pageNumber);
+    
 }

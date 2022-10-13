@@ -2,10 +2,14 @@ package com.aryan.blogging.bloggingapis.services;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.aryan.blogging.bloggingapis.entities.Category;
@@ -73,6 +77,8 @@ public class PostServiceImpl implements PostService{
         return postDtos;
     }
 
+  
+
     @Override
     public PostDto getPostById(Integer postId) {
    Post post=postRepo.findById(postId).orElseThrow(()-> new ResourceNotFoundException("Post","Post id", postId));
@@ -97,7 +103,21 @@ public class PostServiceImpl implements PostService{
 
     @Override
     public List<PostDto> searchPosts(String keyword) {
-        return null;
+        List<Post> posts=this.postRepo.findByTitleContaining(keyword);
+        List<PostDto> postDtos=posts.stream().map(post-> modelMapper.map(post, PostDto.class)).collect(Collectors.toList());
+        return postDtos;
+    }
+
+    @Override
+    public List<PostDto> getAllPosts(Integer pageNumber,Integer pageSize) {
+     
+        Pageable page=PageRequest.of(pageNumber, pageSize);
+        Page<Post> pagePost=this.postRepo.findAll(page);
+        List<Post> allPosts=pagePost.getContent();
+        List<PostDto> postDtos=allPosts.stream().map((post)-> modelMapper.map(post, PostDto.class)).collect(Collectors.toList());
+        
+
+        return postDtos;
     }
     
 }
