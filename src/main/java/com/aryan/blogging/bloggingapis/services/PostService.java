@@ -28,6 +28,6 @@ public interface PostService {
 
     List<PostDto> searchPosts(String keyword);
 
-    PostResponse getAllPosts(Integer pageSize,Integer pageNumber);
+    PostResponse getAllPosts(Integer pageSize,Integer pageNumber,String sortBy,String sortDir);
     
 }

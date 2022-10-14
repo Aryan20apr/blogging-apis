@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.aryan.blogging.bloggingapis.config.Constants;
 import com.aryan.blogging.bloggingapis.payload.ApiResponse;
 import com.aryan.blogging.bloggingapis.payload.PostDto;
 import com.aryan.blogging.bloggingapis.payload.PostResponse;
@@ -61,11 +62,20 @@ public class PostController {
     //     List<PostDto> posts = this.postService.getAllPosts(pageNumber,pageSize);
     //     return new ResponseEntity<List<PostDto>>(posts, HttpStatus.OK);
     // }
+    // @GetMapping("/posts")
+    // public ResponseEntity<PostResponse> getAllPosts(
+    //         @RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
+    //         @RequestParam(value = "pageSize", defaultValue = "10", required = false) Integer pageSize) {
+    //     PostResponse posts = this.postService.getAllPosts(pageNumber,pageSize);
+    //     return new ResponseEntity<PostResponse>(posts, HttpStatus.OK);
+    // }
     @GetMapping("/posts")
     public ResponseEntity<PostResponse> getAllPosts(
-            @RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
-            @RequestParam(value = "pageSize", defaultValue = "10", required = false) Integer pageSize) {
-        PostResponse posts = this.postService.getAllPosts(pageNumber,pageSize);
+            @RequestParam(value = "pageNumber", defaultValue = Constants.PAGE_NUMBER, required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = Constants.PAGE_SIZE, required = false) Integer pageSize,
+            @RequestParam(value = "sortBy",defaultValue = Constants.SORT_BY,required = false)String sortBy,
+            @RequestParam(value = "sortDir",defaultValue = Constants.SORT_DIR, required = false ) String sortDir ) {
+        PostResponse posts = this.postService.getAllPosts(pageNumber,pageSize,sortBy,sortDir);
         return new ResponseEntity<PostResponse>(posts, HttpStatus.OK);
     }
 
