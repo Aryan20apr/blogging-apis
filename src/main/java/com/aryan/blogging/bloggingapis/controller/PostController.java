@@ -133,14 +133,14 @@ public class PostController {
         
         return new ResponseEntity<PostDto>(postDto,HttpStatus.OK);
     }
- //Method to serve files
- @GetMapping(path="/post/image/download/{imageName}",produces=MediaType.IMAGE_PNG_VALUE)
- public void downloadFile(@PathVariable("imageName") String imageName,HttpServletResponse response) throws IOException
- {
+    //Method to serve files
+    @GetMapping(path="/post/image/download/{imageName}",produces=MediaType.IMAGE_PNG_VALUE)
+     public void downloadFile(@PathVariable("imageName") String imageName,HttpServletResponse response) throws IOException
+    {
      InputStream resource = this.fileService.getResource(path,imageName);
      response.setContentType(MediaType.IMAGE_PNG_VALUE);//Specify the type of content to be sent in response
      StreamUtils.copy(resource, response.getOutputStream());//Put the data obtained from InputStream to the output Stream
- }
+    }
  
 
 }
