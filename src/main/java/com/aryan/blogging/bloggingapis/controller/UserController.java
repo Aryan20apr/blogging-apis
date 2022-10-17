@@ -7,6 +7,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -54,6 +55,8 @@ public class UserController {
     //     // return ResponseEntity.ok(Map.of("message","User Deleted Successfully"));
     //     return new ResponseEntity(Map.of("message","User Deleted Successfully"),HttpStatus.OK);
     // }
+        @PreAuthorize("hasRole('ADMIN')")//uSER WILL admin role will only have this method's access
+        //Annotation for specifying a method access-control expression which will be evaluated to decide whether a method invocation is allowed or not.
         @DeleteMapping("/{userId}")
       public ResponseEntity<ApiResponse> deleteUser(@PathVariable("userId") Integer uid)
     {
