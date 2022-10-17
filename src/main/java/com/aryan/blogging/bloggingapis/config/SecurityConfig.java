@@ -64,7 +64,7 @@ private CustomUserDetailService customUserDetailService;
 	@Autowired
 	private JwtAuthenticationFilter jwtAuthenticationFilter;
 	
-    public static final String[] PUBLIC_URLS = {"/api/auth/login"};/* , "/v3/api-docs", "/v2/api-docs",
+    public static final String[] PUBLIC_URLS = {"/api/auth/**",};/* , "/v3/api-docs", "/v2/api-docs",
             "/swagger-resources/**", "/swagger-ui/**", "/webjars/**"
 
     };*/

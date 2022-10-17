@@ -16,18 +16,17 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+
 import lombok.Setter;
 
 @Entity
-@Table(name="post")
+@Table(name = "post")
 @Getter
 @Setter
-//@NoArgsConstructor
+// @NoArgsConstructor
 public class Post {
 
-    public Post()
-    {
+    public Post() {
         System.out.println("Inside default Post Constructor");
     }
 
@@ -35,9 +34,8 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(nullable=false,unique = true)
+    @Column(nullable = false, unique = true)
     private String title;
-
 
     private String content;
 
@@ -46,13 +44,13 @@ public class Post {
     private Date addedDate;
 
     @ManyToOne
-    @JoinColumn(name="category_id")
+    @JoinColumn(name = "category_id")
     private Category category;
 
     @ManyToOne
-   private User user;
-   //We can find the user if we have a post.
+    private User user;
+    // We can find the user if we have a post.
 
-   @OneToMany(mappedBy = "post",cascade = CascadeType.ALL)//Single post can have many comments
-   private Set<Comment> comments=new HashSet<>();
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL) // Single post can have many comments
+    private Set<Comment> comments = new HashSet<>();
 }
