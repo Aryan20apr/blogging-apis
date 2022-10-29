@@ -30,73 +30,78 @@ import com.aryan.blogging.bloggingapis.security.JwtAuthenticationFilter;
 @Configuration
 @EnableWebSecurity
 
-//@EnableWebMvc
+@EnableWebMvc
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
+    // @Autowired
+    // private CustomUserDetailService customUserDetailService;
 
+    // @Bean
+    // public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    // http.csrf().disable().authorizeHttpRequests().anyRequest().authenticated().and().httpBasic();
 
-// 	@Autowired
-// 	private CustomUserDetailService customUserDetailService;
+    // return http.build();
 
-//     @Bean
-// 	    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-// 	        http.csrf().disable().authorizeHttpRequests().anyRequest().authenticated().and().httpBasic();
-	          
-// 	        return http.build();
-    
-// }
-// protected void configure(AuthenticationManagerBuilder auth) throws Exception{
-// 	auth.userDetailsService(this.customUserDetailService).passwordEncoder(passwordEncoder());
-// }
+    // }
+    // protected void configure(AuthenticationManagerBuilder auth) throws Exception{
+    // auth.userDetailsService(this.customUserDetailService).passwordEncoder(passwordEncoder());
+    // }
 
-// @Bean
-// public PasswordEncoder passwordEncoder()
-// {
-// 	return new BCryptPasswordEncoder();
-// }
-@Autowired
-private CustomUserDetailService customUserDetailService;
+    // @Bean
+    // public PasswordEncoder passwordEncoder()
+    // {
+    // return new BCryptPasswordEncoder();
+    // }
+    @Autowired
+    private CustomUserDetailService customUserDetailService;
 
-	@Autowired
-	private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    @Autowired
+    private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
-	@Autowired
-	private JwtAuthenticationFilter jwtAuthenticationFilter;
-	
-    public static final String[] PUBLIC_URLS = {"/api/auth/**",};/* , "/v3/api-docs", "/v2/api-docs",
-            "/swagger-resources/**", "/swagger-ui/**", "/webjars/**"
+    @Autowired
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    };*/
-	@Bean
-	public SecurityFilterChain securityFilterChain(HttpSecurity http)throws Exception
-	{
-		http.
-		csrf()
-		.disable()
-		.authorizeHttpRequests()
-		.antMatchers(PUBLIC_URLS)
-		.permitAll()
-		//.antMatchers(HttpMethod.GET)
-		//.permitAll()
-		.anyRequest()
-		.authenticated()
-		.and().exceptionHandling()
-		.authenticationEntryPoint(this.jwtAuthenticationEntryPoint)//If at any time, any exception is generated due to unauthourization, the commence method will be executed inside the JwtAuthenticationEntryPoint
-		.and()
-		.sessionManagement()
-		.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+    public static final String[] PUBLIC_URLS = { "/api/auth/**",
+            "/v3/api-docs", "/v2/api-docs",
+            "/swagger-resources/**", "/swagger-ui/**",
+            "/webjars/**"
 
-		//Here we have set the jwtAuthenticationEntryPoint and session management policies.
-		//Session management policies are stateless as jwt authentication works on statless mechanism
+    };
 
-		http.addFilterBefore(this.jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-		http.authenticationProvider(daoAuthenticationProvider());
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.csrf()
+                .disable()
+                .authorizeHttpRequests()
+                .antMatchers(PUBLIC_URLS)
+                .permitAll()
+                 .antMatchers(HttpMethod.GET)
+                 .permitAll()
+                .anyRequest()
+                .authenticated()
+                .and().exceptionHandling()
+                .authenticationEntryPoint(this.jwtAuthenticationEntryPoint)// If at any time, any exception is generated
+                                                                           // due to unauthourization, the commence
+                                                                           // method will be executed inside the
+                                                                           // JwtAuthenticationEntryPoint
+                .and()
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
+        // Here we have set the jwtAuthenticationEntryPoint and session management
+        // policies.
+        // Session management policies are stateless as jwt authentication works on
+        // statless mechanism
+
+        http.addFilterBefore(this.jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        http.authenticationProvider(daoAuthenticationProvider());
         DefaultSecurityFilterChain defaultSecurityFilterChain = http.build();
 
         return defaultSecurityFilterChain;
-	}
-	@Bean
+    }
+
+    @Bean
     public DaoAuthenticationProvider daoAuthenticationProvider() {
 
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
@@ -105,39 +110,43 @@ private CustomUserDetailService customUserDetailService;
         return provider;
 
     }
-	@Bean
+
+    @Bean
     public AuthenticationManager authenticationManagerBean(AuthenticationConfiguration configuration) throws Exception {
-		//Required to authenticate the password
+        // Required to authenticate the password
         return configuration.getAuthenticationManager();
     }
-	@Bean
+
+    @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-	// @Bean
+    // @Bean
     // public FilterRegistrationBean coresFilter() {
-    //     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    // UrlBasedCorsConfigurationSource source = new
+    // UrlBasedCorsConfigurationSource();
 
-    //     CorsConfiguration corsConfiguration = new CorsConfiguration();
-    //     corsConfiguration.setAllowCredentials(true);
-    //     corsConfiguration.addAllowedOriginPattern("*");
-    //     corsConfiguration.addAllowedHeader("Authorization");
-    //     corsConfiguration.addAllowedHeader("Content-Type");
-    //     corsConfiguration.addAllowedHeader("Accept");
-    //     corsConfiguration.addAllowedMethod("POST");
-    //     corsConfiguration.addAllowedMethod("GET");
-    //     corsConfiguration.addAllowedMethod("DELETE");
-    //     corsConfiguration.addAllowedMethod("PUT");
-    //     corsConfiguration.addAllowedMethod("OPTIONS");
-    //     corsConfiguration.setMaxAge(3600L);
+    // CorsConfiguration corsConfiguration = new CorsConfiguration();
+    // corsConfiguration.setAllowCredentials(true);
+    // corsConfiguration.addAllowedOriginPattern("*");
+    // corsConfiguration.addAllowedHeader("Authorization");
+    // corsConfiguration.addAllowedHeader("Content-Type");
+    // corsConfiguration.addAllowedHeader("Accept");
+    // corsConfiguration.addAllowedMethod("POST");
+    // corsConfiguration.addAllowedMethod("GET");
+    // corsConfiguration.addAllowedMethod("DELETE");
+    // corsConfiguration.addAllowedMethod("PUT");
+    // corsConfiguration.addAllowedMethod("OPTIONS");
+    // corsConfiguration.setMaxAge(3600L);
 
-    //     source.registerCorsConfiguration("/**", corsConfiguration);
+    // source.registerCorsConfiguration("/**", corsConfiguration);
 
-    //     FilterRegistrationBean bean = new FilterRegistrationBean(new CorsFilter(source));
+    // FilterRegistrationBean bean = new FilterRegistrationBean(new
+    // CorsFilter(source));
 
-    //     bean.setOrder(-110);
+    // bean.setOrder(-110);
 
-    //     return bean;
+    // return bean;
     // }
 
 }

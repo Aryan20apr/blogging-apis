@@ -40,11 +40,11 @@ public class BloggingApisApplication implements CommandLineRunner{
 		try {
 			Role adminrole=new Role();
 			adminrole.setId(Constants.ADMIN_ROLE_ID);
-			adminrole.setName("ADMIN_USER");
+			adminrole.setName("ROLE_ADMIN");//Note-This should be written as ROLE_ADMIN only so that it is detected properly when using swagger
 
 			Role normalrole=new Role();
-			normalrole.setId(Constants.NORMAL_ROLE_ID);
-			normalrole.setName("NORMAL_USER");
+			normalrole.setId(Constants.NORMAL_ROLE_ID);//Note-This should be written as ROLE_NORMAL only so that it is detected properly when using swagger
+			normalrole.setName("ROLE_NORMAL");
 
 			List<Role> list=List.of(adminrole,normalrole);
 			List<Role> result=roleRepo.saveAll(list);//This will insert the two roles into the table and try to update it if already present
