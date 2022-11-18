@@ -1,10 +1,10 @@
 package com.aryan.blogging.bloggingapis.services;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-
-
+import org.hibernate.annotations.common.util.StringHelper;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -13,10 +13,13 @@ import org.springframework.stereotype.Service;
 import com.aryan.blogging.bloggingapis.entities.Role;
 import com.aryan.blogging.bloggingapis.entities.User;
 import com.aryan.blogging.bloggingapis.exceptions.ResourceNotFoundException;
+import com.aryan.blogging.bloggingapis.payload.PasswordChangeDTO;
 import com.aryan.blogging.bloggingapis.payload.UserDTO;
 import com.aryan.blogging.bloggingapis.repositories.RoleRepo;
 import com.aryan.blogging.bloggingapis.repositories.UserRepo;
 import com.aryan.blogging.bloggingapis.utils.Constants;
+import com.aryan.blogging.bloggingapis.utils.Constants.PasswordChangeStatus;
+
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -52,7 +55,7 @@ public class UserServiceImpl implements UserService {
 		user.setFirstname(userdto.getFirstname());
 		user.setLastname(userdto.getLastname());
 		user.setAbout(userdto.getAbout());
-		user.setPassword(userdto.getPassword());
+//		user.setPassword(userdto.getPassword());
 
 		User updatUser=this.userRepo.save(user);
 		UserDTO dto= this.userToDTO(updatUser);
@@ -130,4 +133,61 @@ public class UserServiceImpl implements UserService {
 
 		return modelMapper.map(newUser, UserDTO.class);
 	}
+
+    @Override
+    public PasswordChangeStatus changePassword(PasswordChangeDTO passwordChangeDTO) {
+        
+        Optional<User> optional= userRepo.findByEmail(passwordChangeDTO.getEmail());
+        
+        User user=optional.get();
+        if(user==null)
+        {
+            return PasswordChangeStatus.USER_DOES_NOT_EXIST;
+        }
+        String password=user.getPassword();
+       
+      
+       
+        if(passwordEncoder.matches(passwordChangeDTO.getPassword(), password))
+        {
+            System.out.println("Password are same");
+            String encodedPassword=passwordEncoder.encode(passwordChangeDTO.getNewpassword());
+            user.setPassword(encodedPassword);
+            User updatedUser=userRepo.save(user);
+            return PasswordChangeStatus.PASSWORD_CHANGED;
+        }
+        else
+        {
+            return PasswordChangeStatus.PASSWORD_INCORRECT;
+        }
+        
+        
+      
+    }
+    @Override
+    public PasswordChangeStatus forgotPassword(PasswordChangeDTO passwordChangeDTO) {
+        
+        Optional<User> optional= userRepo.findByEmail(passwordChangeDTO.getEmail());
+        
+        User user=optional.get();
+        System.out.println(user.getEmail());
+        if(user==null)
+        {
+            return PasswordChangeStatus.USER_DOES_NOT_EXIST;
+        }
+        
+       
+      
+       
+       
+        String encodedPassword=passwordEncoder.encode(passwordChangeDTO.getNewpassword());
+        user.setPassword(encodedPassword);
+            User updatedUser=userRepo.save(user);
+            return PasswordChangeStatus.PASSWORD_CHANGED;
+        
+       
+        
+        
+      
+    }
 }

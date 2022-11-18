@@ -18,8 +18,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.aryan.blogging.bloggingapis.payload.ApiResponse;
+import com.aryan.blogging.bloggingapis.payload.PasswordChangeDTO;
 import com.aryan.blogging.bloggingapis.payload.UserDTO;
 import com.aryan.blogging.bloggingapis.services.UserService;
+import com.aryan.blogging.bloggingapis.utils.Constants.PasswordChangeStatus;
 
 import java.util.List;
 
@@ -46,6 +48,34 @@ public class UserController {
         UserDTO updatedUser=this.userService.updateUser(userDTO, uid);
         return ResponseEntity.ok(updatedUser);
     }
+    
+    // Update Password
+    @PostMapping("/changepassword")
+    public ResponseEntity<ApiResponse> changePassword(@Valid @RequestBody PasswordChangeDTO passinfo )
+    {
+        PasswordChangeStatus b=userService.changePassword(passinfo);
+        ApiResponse response=new ApiResponse();
+        
+        if(PasswordChangeStatus.PASSWORD_CHANGED==b)
+        {
+            response.setMessage("Password changed successfully");
+            response.setSuccess(true);
+            return new ResponseEntity<ApiResponse>(response,HttpStatus.OK);
+        }
+        else if(PasswordChangeStatus.PASSWORD_INCORRECT==b)
+        {
+            response.setMessage("Password entered is incorrect");
+            response.setSuccess(false);
+            return new ResponseEntity<ApiResponse>(response,HttpStatus.UNAUTHORIZED);
+        }
+        else {
+            response.setMessage("User Does Not exist with this email");
+            response.setSuccess(false);
+            return new ResponseEntity<ApiResponse>(response,HttpStatus.UNAUTHORIZED);
+        }
+        
+    }
+    
 
     //Delete- delete user
     //@DeleteMapping("/userId")

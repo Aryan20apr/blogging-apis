@@ -1,11 +1,11 @@
-spring:
-  datasource:
-    url: jdbc:sqlserver://blogging-app.database.windows.net:1433;database=Blogging_Application_Database;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;
-    username: aryansingh
-    password: aryan@194
-  jpa:
-    show-sql: true
-    hibernate:
-      ddl-auto: update
-      dialect : org.hibernate.dialect.SQLServer2012Dialect
-
+#spring:
+#  datasource:
+#    url: jdbc:sqlserver://blogging-app.database.windows.net:1433;database=Blogging_Application_Database;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;
+#    username: aryansingh
+#    password: aryan@194
+#  jpa:
+#    show-sql: true
+#    hibernate:
+#      ddl-auto: update
+#      dialect : org.hibernate.dialect.SQLServer2012Dialect
+#

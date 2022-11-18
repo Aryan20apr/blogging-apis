@@ -31,11 +31,11 @@
 			<scope>runtime</scope>
 			<optional>true</optional>
 		</dependency>
-		<!-- <dependency>
+		 <dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 			<scope>runtime</scope>
-		</dependency> -->
+		</dependency> 
 		
 		<dependency>
 			<groupId>com.microsoft.sqlserver</groupId>
@@ -89,6 +89,18 @@
 			<artifactId>springfox-boot-starter</artifactId>
 			<version>3.0.0</version>
 		</dependency>
+  <!-- https://mvnrepository.com/artifact/com.sun.mail/jakarta.mail -->
+<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
+<dependency>
+    <groupId>com.google.guava</groupId>
+    <artifactId>guava</artifactId>
+    <version>31.1-jre</version>
+</dependency>
 
 
 	</dependencies>
