@@ -30,9 +30,9 @@ public class PostDto {
     // lead to the recursion
     private CategoryDTO category;
 
-    private UserDTO user;
+    private UserResponseDTO user;
 
-    private Set<CommentDto> comments = new HashSet<>();// With this we can get the comment of post with the post itself
+    //private Set<CommentDto> comments = new HashSet<>();// With this we can get the comment of post with the post itself
 
     public PostDto() {
         System.out.println("Inside default PostDto constructor");

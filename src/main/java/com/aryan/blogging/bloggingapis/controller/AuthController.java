@@ -61,6 +61,8 @@ public class AuthController {
         UserDetails userDetails = userDetailsService.loadUserByUsername(request.getUsername());
         String token = jwtTokenHelper.generateToken(userDetails);
         JwtAuthResponse response = new JwtAuthResponse();
+        response.setMessage("Login Successfull");
+        response.setSuccess(true);
         response.setToken(token);
         // response.setUser(this.mapper.map((User) userDetails, UserDTO.class));
         return new ResponseEntity<JwtAuthResponse>(response, HttpStatus.OK);
@@ -81,9 +83,10 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<UserDTO> register(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<ApiResponse<UserDTO>> register(@RequestBody UserDTO userDTO) {
         UserDTO registeredUser = userService.registerNewUser(userDTO);
-        return new ResponseEntity<UserDTO>(registeredUser, HttpStatus.CREATED);
+        ApiResponse<UserDTO> apiResponse=new ApiResponse<UserDTO>(registeredUser,"User registered successfully",true);
+        return new ResponseEntity<ApiResponse<UserDTO>>(apiResponse, HttpStatus.CREATED);
 
     }
 
@@ -117,10 +120,10 @@ public class AuthController {
         boolean b = emailService.sendEmail(email);
 
         if (b) {
-            OTPSentResponse response = new OTPSentResponse(email, "OTP Sent Successfully");
+            OTPSentResponse response = new OTPSentResponse(email, "OTP Sent Successfully",true);
             return new ResponseEntity<OTPSentResponse>(response, HttpStatus.OK);
         } else {
-            OTPSentResponse response = new OTPSentResponse(email, "Could not send otp. Enter a valid email id.");
+            OTPSentResponse response = new OTPSentResponse(email, "Could not send otp. Enter a valid email id.",false);
             return new ResponseEntity<OTPSentResponse>(response, HttpStatus.OK);
         }
     }

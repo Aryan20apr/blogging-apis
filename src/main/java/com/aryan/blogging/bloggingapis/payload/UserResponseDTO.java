@@ -7,11 +7,11 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
-public class ApiResponse<T> {
-    T data;
-    private String message;
-    private boolean success;
-    
-}
+@NoArgsConstructor
+public class UserResponseDTO {
+    private int id;
+    private String firstname;
+    private String lastname;
+    private String email;
+    }

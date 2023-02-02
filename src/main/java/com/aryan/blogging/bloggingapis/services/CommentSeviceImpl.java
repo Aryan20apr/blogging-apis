@@ -2,6 +2,8 @@ package com.aryan.blogging.bloggingapis.services;
 
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +14,7 @@ import com.aryan.blogging.bloggingapis.entities.Post;
 import com.aryan.blogging.bloggingapis.entities.User;
 import com.aryan.blogging.bloggingapis.exceptions.ResourceNotFoundException;
 import com.aryan.blogging.bloggingapis.payload.CommentDto;
+import com.aryan.blogging.bloggingapis.payload.PostDto;
 import com.aryan.blogging.bloggingapis.repositories.CommentRepo;
 import com.aryan.blogging.bloggingapis.repositories.PostRepo;
 import com.aryan.blogging.bloggingapis.repositories.UserRepo;
@@ -50,6 +53,13 @@ public class CommentSeviceImpl implements CommentService{
         
         Comment comment=commentRepo.findById(commentId).orElseThrow(()-> new ResourceNotFoundException("Comment","Comment id", commentId));
         commentRepo.delete(comment);
+    }
+
+    @Override
+    public List<CommentDto> getAllComments(Integer postId) {
+        List<Comment> comments=commentRepo.findByPostId(postId);
+        List<CommentDto> commentDtos=comments.stream().map((comment)->this.modelMapper.map(comment,CommentDto.class)).collect(Collectors.toList());        
+        return commentDtos;
     }
 
     

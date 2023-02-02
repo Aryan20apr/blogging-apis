@@ -1,6 +1,6 @@
 package com.aryan.blogging.bloggingapis.controller;
 
-import java.util.Map;
+
 
 import javax.validation.Valid;
 
@@ -34,44 +34,50 @@ public class UserController {
     @Autowired
     private UserService userService;
     @PostMapping("/")
-    public ResponseEntity<UserDTO> createUser(@Valid @RequestBody UserDTO userDTO)
+    public ResponseEntity<ApiResponse<UserDTO>> createUser(@Valid @RequestBody UserDTO userDTO)
     {
         UserDTO createUserDto=this.userService.createUser(userDTO);
-        return new ResponseEntity<>(createUserDto,HttpStatus.CREATED);
+        ApiResponse<UserDTO> apiResponse=new ApiResponse<UserDTO>(createUserDto,"User created successfully",true);
+        return new ResponseEntity<ApiResponse<UserDTO>>(apiResponse,HttpStatus.CREATED);
 
     }
 
     //PUT- user update
     @PutMapping("/{userId}") //userId is path URI variable
-    public ResponseEntity<UserDTO> updateUser(@Valid @RequestBody UserDTO userDTO,@PathVariable("userId") Integer uid)
+    public ResponseEntity<ApiResponse<UserDTO>> updateUser(@Valid @RequestBody UserDTO userDTO,@PathVariable("userId") Integer uid)
     {
         UserDTO updatedUser=this.userService.updateUser(userDTO, uid);
-        return ResponseEntity.ok(updatedUser);
+        ApiResponse<UserDTO> apiResponse=new ApiResponse<UserDTO>(updatedUser,"User created successfully",true);
+        return new ResponseEntity<ApiResponse<UserDTO>>(apiResponse,HttpStatus.CREATED);
+        
     }
     
     // Update Password
     @PostMapping("/changepassword")
-    public ResponseEntity<ApiResponse> changePassword(@Valid @RequestBody PasswordChangeDTO passinfo )
+    public ResponseEntity<ApiResponse<String>> changePassword(@Valid @RequestBody PasswordChangeDTO passinfo )
     {
         PasswordChangeStatus b=userService.changePassword(passinfo);
-        ApiResponse response=new ApiResponse();
+        ApiResponse<String> response=new ApiResponse<String>();
         
         if(PasswordChangeStatus.PASSWORD_CHANGED==b)
         {
+            response.setData(passinfo.getEmail());
             response.setMessage("Password changed successfully");
             response.setSuccess(true);
-            return new ResponseEntity<ApiResponse>(response,HttpStatus.OK);
+            return new ResponseEntity<ApiResponse<String>>(response,HttpStatus.OK);
         }
         else if(PasswordChangeStatus.PASSWORD_INCORRECT==b)
         {
+            response.setData(passinfo.getEmail());
             response.setMessage("Password entered is incorrect");
             response.setSuccess(false);
-            return new ResponseEntity<ApiResponse>(response,HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<ApiResponse<String>>(response,HttpStatus.UNAUTHORIZED);
         }
         else {
+            response.setData(passinfo.getEmail());
             response.setMessage("User Does Not exist with this email");
             response.setSuccess(false);
-            return new ResponseEntity<ApiResponse>(response,HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<ApiResponse<String>>(response,HttpStatus.UNAUTHORIZED);
         }
         
     }
@@ -88,11 +94,12 @@ public class UserController {
         @PreAuthorize("hasRole('ADMIN')")//uSER WILL admin role will only have this method's access
         //Annotation for specifying a method access-control expression which will be evaluated to decide whether a method invocation is allowed or not.
         @DeleteMapping("/{userId}")
-      public ResponseEntity<ApiResponse> deleteUser(@PathVariable("userId") Integer uid)
+      public ResponseEntity<ApiResponse<Integer>> deleteUser(@PathVariable("userId") Integer uid)
     {
         this.userService.deleteUser(uid);
+        
         // return ResponseEntity.ok(Map.of("message","User Deleted Successfully"));
-        return new ResponseEntity<ApiResponse>(new ApiResponse("User Deleted Successfully",true),HttpStatus.OK);
+        return new ResponseEntity<ApiResponse<Integer>>(new ApiResponse<Integer>(uid,"User Deleted Successfully",true),HttpStatus.OK);
     }
 
     //GET- get user
@@ -104,9 +111,10 @@ public class UserController {
 
         //GET- get single user
         @GetMapping("/{userid}")
-        public ResponseEntity<UserDTO> getSingleUser(@PathVariable("userid") Integer uid)
+        public ResponseEntity<ApiResponse<UserDTO>> getSingleUser(@PathVariable("userid") Integer uid)
         {
-            return ResponseEntity.ok(this.userService.getUserById(uid));
+            ApiResponse<UserDTO> apiResponse=new ApiResponse<UserDTO>(this.userService.getUserById(uid),"User obtained ",true); 
+            return ResponseEntity.ok(apiResponse);
         }
 
        

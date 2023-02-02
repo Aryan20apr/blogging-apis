@@ -49,6 +49,8 @@ public class User implements UserDetails {
 	private String lastname;
 	@Column(name = "email", nullable = false, length = 50)
 	private String email;
+	
+	
 
 	@Column(name = "password", nullable = false, length = 150)
 	private String password;
@@ -59,10 +61,10 @@ public class User implements UserDetails {
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<Post> posts = new ArrayList<>();
 
-	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL) // Single post can have many comments
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY ) // Single post can have many comments
 	private Set<Comment> comments = new HashSet<>();
 
-	@ManyToMany(cascade=CascadeType.ALL,fetch = FetchType.EAGER)//When use is created, role also created 
+	@ManyToMany(cascade=CascadeType.ALL,fetch = FetchType.LAZY)//When use is created, role also created 
 	@JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "role", referencedColumnName = "id"))
 	private Set<Role> roles = new HashSet<>();
 

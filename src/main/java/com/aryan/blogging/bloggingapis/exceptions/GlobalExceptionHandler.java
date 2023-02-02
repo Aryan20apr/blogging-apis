@@ -18,12 +18,12 @@ import com.aryan.blogging.bloggingapis.payload.ApiResponse;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class) // ResourceNotFoundException class was created by me
-    public ResponseEntity<ApiResponse> resourceNotFoundExceptionHandler(ResourceNotFoundException e)
+    public ResponseEntity<ApiResponse<?>> resourceNotFoundExceptionHandler(ResourceNotFoundException e)
 
     {
         String message = e.getMessage();
-        ApiResponse apiResponse = new ApiResponse(message, false);
-        return new ResponseEntity<ApiResponse>(apiResponse, HttpStatus.NOT_FOUND);
+        ApiResponse<?> apiResponse = new ApiResponse<>(null,message, false);
+        return new ResponseEntity<ApiResponse<?>>(apiResponse, HttpStatus.OK);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -36,16 +36,16 @@ public class GlobalExceptionHandler {
         });
         // System.out.println("\nError response is \n"+resp+"\n\n");
 
-        return new ResponseEntity<Map<String, String>>(resp, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<Map<String, String>>(resp, HttpStatus.OK);
     }
 
     @ExceptionHandler(ApiException.class)
-    public ResponseEntity<ApiResponse> handleApiException(ApiException exception)
+    public ResponseEntity<ApiResponse<?>> handleApiException(ApiException exception)
 
     {
         String message = exception.getMessage();
-        ApiResponse apiResponse = new ApiResponse(message, false);
-        return new ResponseEntity<ApiResponse>(apiResponse, HttpStatus.BAD_REQUEST);
+        ApiResponse<?> apiResponse = new ApiResponse<>(null,message, false);
+        return new ResponseEntity<ApiResponse<?>>(apiResponse, HttpStatus.OK);
 
     }
 }

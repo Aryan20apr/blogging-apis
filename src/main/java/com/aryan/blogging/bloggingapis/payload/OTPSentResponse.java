@@ -11,4 +11,5 @@ public class OTPSentResponse {
 
     String email;
     String message;
+    boolean success;
 }

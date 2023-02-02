@@ -43,10 +43,11 @@ public class EmailService {
         
         //get the system properties
         
-        Optional<User> optional=userRepo.findByEmail(recepient);
-        User user=optional.get();
-        if(user==null)
-            return false;
+        //Optional<User> optional=userRepo.findByEmail(recepient);
+        //System.out.println("Optional is "+optional.get());
+        //User user=optional.get();
+       // if(user==null)
+        //    return false;
         
         Properties properties=System.getProperties();
         System.out.println(properties);

@@ -26,11 +26,9 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import com.aryan.blogging.bloggingapis.security.CustomUserDetailService;
 import com.aryan.blogging.bloggingapis.security.JwtAuthenticationEntryPoint;
 import com.aryan.blogging.bloggingapis.security.JwtAuthenticationFilter;
-
+@EnableWebMvc
 @Configuration
 @EnableWebSecurity
-
-@EnableWebMvc
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
@@ -62,7 +60,7 @@ public class SecurityConfig {
     @Autowired
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    public static final String[] PUBLIC_URLS = { "/api/auth/**",
+    public static final String[] PUBLIC_URLS = { "/api/auth/**","/api/auth/login",
             "/v3/api-docs", "/v2/api-docs",
             "/swagger-resources/**", "/swagger-ui/**",
             "/webjars/**"
