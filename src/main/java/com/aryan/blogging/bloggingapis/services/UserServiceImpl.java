@@ -4,21 +4,27 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.hibernate.annotations.common.util.StringHelper;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.aryan.blogging.bloggingapis.entities.Category;
 import com.aryan.blogging.bloggingapis.entities.Role;
 import com.aryan.blogging.bloggingapis.entities.User;
 import com.aryan.blogging.bloggingapis.exceptions.ResourceNotFoundException;
+import com.aryan.blogging.bloggingapis.exceptions.UserAlreadyExistException;
+import com.aryan.blogging.bloggingapis.payload.CategoryDTO;
 import com.aryan.blogging.bloggingapis.payload.PasswordChangeDTO;
+import com.aryan.blogging.bloggingapis.payload.SubscriptionDTO;
 import com.aryan.blogging.bloggingapis.payload.UserDTO;
+import com.aryan.blogging.bloggingapis.repositories.CategoryRepo;
 import com.aryan.blogging.bloggingapis.repositories.RoleRepo;
 import com.aryan.blogging.bloggingapis.repositories.UserRepo;
 import com.aryan.blogging.bloggingapis.utils.Constants;
 import com.aryan.blogging.bloggingapis.utils.Constants.PasswordChangeStatus;
+
 
 
 @Service
@@ -37,18 +43,33 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private RoleRepo roleRepo;
+	
+	@Autowired
+	private CategoryRepo categoryRepo;
 
 	@Override
 	public UserDTO createUser(UserDTO userdto) {
 		
 		User user=this.dtoToUser(userdto);
+
+        
+        Optional<User> emailUser=this.userRepo.findByEmail(user.getEmail());
+        User  user1=emailUser.get();
+        System.out.println("User found"+user!=null);
+        if(user1!=null)
+        {
+            throw new UserAlreadyExistException(userdto,"User with this username already exist",false);
+        }
+        else {
+       // User phoneUser=this.userRepository.findByPhone(user.getPhone());
 		User savedUser=this.userRepo.save(user);
-		return this.userToDTO(savedUser);
+		
+		return this.userToDTO(savedUser);}
 	}
 
 	@Override
-	public UserDTO updateUser(UserDTO userdto,Integer userId) {
-		User user=this.userRepo.findById(userId).orElseThrow(()->new ResourceNotFoundException("User"," id ",userId));
+	public UserDTO updateUser(UserDTO userdto) {
+		User user=this.userRepo.findById(userdto.getId()).orElseThrow(()->new ResourceNotFoundException("User"," id ",userdto.getId()));
 		
 		user.setEmail(userdto.getEmail());
 		user.setAbout(userdto.getAbout());
@@ -64,8 +85,8 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public UserDTO getUserById(int userId) {
-		User user=this.userRepo.findById(userId).orElseThrow(()->new ResourceNotFoundException("User"," id ",userId));
+	public UserDTO getUserByEmail(String email) {
+		User user=this.userRepo.findByEmail(email).orElseThrow(()->new ResourceNotFoundException("User"," email ",email));
 		return this.userToDTO(user);
 	}
 
@@ -120,6 +141,14 @@ public class UserServiceImpl implements UserService {
 	public UserDTO registerNewUser(UserDTO userdto) {
 		
 		User user=modelMapper.map(userdto, User.class);
+		Optional<User> emailUser=this.userRepo.findByEmail(user.getEmail());
+        Boolean b=emailUser.isEmpty();
+        System.out.println("User found"+b);
+        if(!b)
+        {
+            throw new UserAlreadyExistException(userdto,"User with this username already exist",false);
+        }
+        else {
 
 		//encoded the password
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -131,7 +160,7 @@ public class UserServiceImpl implements UserService {
 		User newUser=this.userRepo.save(user);
 
 
-		return modelMapper.map(newUser, UserDTO.class);
+		return modelMapper.map(newUser, UserDTO.class);}
 	}
 
     @Override
@@ -139,12 +168,12 @@ public class UserServiceImpl implements UserService {
         
         Optional<User> optional= userRepo.findByEmail(passwordChangeDTO.getEmail());
         
-        User user=optional.get();
-        if(user==null)
+        
+        if(optional.isEmpty())
         {
             return PasswordChangeStatus.USER_DOES_NOT_EXIST;
         }
-        String password=user.getPassword();
+        String password=optional.get().getPassword();
        
       
        
@@ -152,8 +181,8 @@ public class UserServiceImpl implements UserService {
         {
             System.out.println("Password are same");
             String encodedPassword=passwordEncoder.encode(passwordChangeDTO.getNewpassword());
-            user.setPassword(encodedPassword);
-            User updatedUser=userRepo.save(user);
+            optional.get().setPassword(encodedPassword);
+            User updatedUser=userRepo.save(optional.get());
             return PasswordChangeStatus.PASSWORD_CHANGED;
         }
         else
@@ -176,6 +205,7 @@ public class UserServiceImpl implements UserService {
             return PasswordChangeStatus.USER_DOES_NOT_EXIST;
         }
         
+        
        
       
        
@@ -190,4 +220,26 @@ public class UserServiceImpl implements UserService {
         
       
     }
+
+    @Override
+    public Boolean checkAvailibility(String email) {
+       
+        
+
+            
+            Optional<User> emailUser=this.userRepo.findByEmail(email);
+           
+            //System.out.println("User found"+user!=null);
+            if(emailUser.isEmpty())
+            {
+                return true;
+            }
+            else {
+          return false;
+            }
+        
+
+    }
+
+    
 }

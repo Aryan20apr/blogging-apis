@@ -12,7 +12,7 @@ import lombok.Setter;
 @Getter
 @Setter
 // @NoArgsConstructor
-public class PostDto {
+public class PostCreationDTO {
 
     private Integer postId;
 
@@ -28,16 +28,8 @@ public class PostDto {
     
     private String addedDate;
 
-    // If we use Category in place of CategoryDTO, we will run into error or
-    // infinite recursion as both category and user have POST (Lists) which will
-    // lead to the recursion
-    private CategoryDTO category;
-
-    private UserResponseDTO user;
-
-    //private Set<CommentDto> comments = new HashSet<>();// With this we can get the comment of post with the post itself
-
-    public PostDto() {
+   
+    public PostCreationDTO() {
         System.out.println("Inside default PostDto constructor");
     }
 }

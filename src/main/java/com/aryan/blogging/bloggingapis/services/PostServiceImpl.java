@@ -1,5 +1,6 @@
 package com.aryan.blogging.bloggingapis.services;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collector;
@@ -17,8 +18,10 @@ import com.aryan.blogging.bloggingapis.entities.Category;
 import com.aryan.blogging.bloggingapis.entities.Post;
 import com.aryan.blogging.bloggingapis.entities.User;
 import com.aryan.blogging.bloggingapis.exceptions.ResourceNotFoundException;
+import com.aryan.blogging.bloggingapis.payload.PostCreationDTO;
 import com.aryan.blogging.bloggingapis.payload.PostDto;
 import com.aryan.blogging.bloggingapis.payload.PostResponse;
+import com.aryan.blogging.bloggingapis.payload.UserPostDTO;
 import com.aryan.blogging.bloggingapis.repositories.CategoryRepo;
 import com.aryan.blogging.bloggingapis.repositories.PostRepo;
 import com.aryan.blogging.bloggingapis.repositories.UserRepo;
@@ -31,6 +34,9 @@ public class PostServiceImpl implements PostService{
 
     @Autowired
     private ModelMapper modelMapper;
+    
+@Autowired
+private MyBlobService blobService;
 
     @Autowired
     private UserRepo userRepo;//For getting the user
@@ -39,35 +45,43 @@ public class PostServiceImpl implements PostService{
     private CategoryRepo categoryRepo;//For getting the category
 
     @Override
-    public PostDto createPost(PostDto postDto,Integer userId,Integer categoryId) {
+    public PostCreationDTO createPost(PostDto postDto,Integer userId,Integer categoryId) {
         User user=this.userRepo.findById(userId).orElseThrow(()-> new ResourceNotFoundException("User", "user id", userId));
         Category category=this.categoryRepo.findById(categoryId).orElseThrow(()-> new ResourceNotFoundException("Category", "category id", categoryId));
 
         Post post=this.modelMapper.map(postDto, Post.class);
-        post.setImageName("default.png");
-        post.setAddedDate(new Date());
+        //post.setImageName("default.png");
+        post.setAddedDate(LocalDate.now().toString());
         post.setUser(user);
         post.setCategory(category);
         Post newPost=this.postRepo.save(post);
 
-        return this.modelMapper.map(newPost,PostDto.class);
+        return this.modelMapper.map(newPost,PostCreationDTO.class);
     }
 
     @Override
-    public PostDto updatePost(PostDto postDto, Integer postId) {
+    public PostCreationDTO updatePost(PostCreationDTO postDto, Integer postId,boolean iremoved) {
         Post post=postRepo.findById(postId).orElseThrow(()-> new ResourceNotFoundException("Post","Post id", postId));
+       if(iremoved)
+          {
+            blobService.deleteImage(post.getImageName());
+            post.setImageName(null);
+            post.setImageUrl(null);
+          }
         post.setTitle(postDto.getTitle());
         post.setContent(postDto.getContent());
-        post.setImageName(postDto.getImageName());
+        //post.setImageName(postDto.getImageName());
         Post newPost=this.postRepo.save(post);
         //post.setCategory(postDto.getCategory());
-        return this.modelMapper.map(postDto, PostDto.class);
+        return this.modelMapper.map(newPost, PostCreationDTO.class);
     }
 
     @Override
     public void deletePost(Integer postId) {
         
         Post post=postRepo.findById(postId).orElseThrow(()-> new ResourceNotFoundException("Post","Post id", postId));
+        if(post.getImageUrl()!=null)
+            blobService.deleteImage(post.getImageName());
         this.postRepo.delete(post);
     }
 
@@ -96,10 +110,10 @@ public class PostServiceImpl implements PostService{
     }
 
     @Override
-    public List<PostDto> getPostByUser(Integer userId) {
+    public List<UserPostDTO> getPostByUser(Integer userId) {
         User user=userRepo.findById(userId).orElseThrow(()-> new ResourceNotFoundException("User","user id", userId));
         List<Post> posts=this.postRepo.findByUser(user);
-        List<PostDto> postsDtos=posts.stream().map(post -> this.modelMapper.map(post,PostDto.class)).collect(Collectors.toList());
+        List<UserPostDTO> postsDtos=posts.stream().map(post -> this.modelMapper.map(post,UserPostDTO.class)).collect(Collectors.toList());
         return postsDtos;
     }
 

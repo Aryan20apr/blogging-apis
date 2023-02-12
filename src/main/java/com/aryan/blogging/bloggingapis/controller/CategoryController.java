@@ -2,7 +2,7 @@ package com.aryan.blogging.bloggingapis.controller;
 
 import java.util.List;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,11 +14,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
 import com.aryan.blogging.bloggingapis.payload.ApiResponse;
 import com.aryan.blogging.bloggingapis.payload.CategoryDTO;
+import com.aryan.blogging.bloggingapis.payload.SubscriptionDTO;
 import com.aryan.blogging.bloggingapis.services.CategoryService;
 
 @RestController
@@ -71,5 +73,33 @@ public class CategoryController {
         ApiResponse<List<CategoryDTO>> apiResponse=new ApiResponse<List<CategoryDTO>>(list,"Category Obtained Successfully",true);
         return new ResponseEntity<ApiResponse<List<CategoryDTO>>>(apiResponse, HttpStatus.OK);
 
+    }
+    
+    @GetMapping("/usercategories")
+    public ResponseEntity<ApiResponse<List<CategoryDTO>>> getUserCategory(@RequestParam int userid) {
+
+        List<CategoryDTO> list = this.categoryService.getUserCategory(userid);
+        ApiResponse<List<CategoryDTO>> apiResponse=new ApiResponse<List<CategoryDTO>>(list,"Category Obtained Successfully",true);
+        return new ResponseEntity<ApiResponse<List<CategoryDTO>>>(apiResponse, HttpStatus.OK);
+
+    }
+    
+    @PostMapping("/category/subscribe")
+    public ResponseEntity<ApiResponse<List<Integer>>> subscribeCategories(@RequestBody SubscriptionDTO subscriptions)
+    {
+        boolean b=categoryService.subscribeCategories(subscriptions);
+       
+            ApiResponse<List<Integer>> response=new ApiResponse<List<Integer>>(subscriptions.getCatids(),"Subscription successfull",true);
+            
+        return ResponseEntity.ok(response);
+    }
+    @PutMapping("/category/unsubscribe")
+    public ResponseEntity<ApiResponse<List<Integer>>> unsubscribeCategories(@RequestBody SubscriptionDTO subscriptions)
+    {
+        boolean b=categoryService.unsubscribeCategories(subscriptions);
+       
+            ApiResponse<List<Integer>> response=new ApiResponse<List<Integer>>(subscriptions.getCatids(),"Subscription removal successfull",true);
+            
+        return ResponseEntity.ok(response);
     }
 }

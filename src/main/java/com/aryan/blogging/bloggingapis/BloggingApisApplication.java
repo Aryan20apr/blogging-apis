@@ -8,7 +8,10 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.aryan.blogging.bloggingapis.entities.Role;
 import com.aryan.blogging.bloggingapis.repositories.RoleRepo;
@@ -55,6 +58,16 @@ public class BloggingApisApplication implements CommandLineRunner{
 		} catch (Exception e) {
 			System.out.println("Role Already Exist");
 		}
+	}
+	
+	@Bean
+	public WebMvcConfigurer customConfigurer() {
+	    return new WebMvcConfigurer() {
+	        @Override
+	        public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
+	            configurer.defaultContentType(MediaType.APPLICATION_JSON);
+	        }
+	    };
 	}
 
 

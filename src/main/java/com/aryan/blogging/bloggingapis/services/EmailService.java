@@ -4,16 +4,7 @@ import java.io.File;
 import java.util.Optional;
 import java.util.Properties;
 
-import javax.mail.Authenticator;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -22,6 +13,18 @@ import org.springframework.stereotype.Service;
 import com.aryan.blogging.bloggingapis.entities.User;
 import com.aryan.blogging.bloggingapis.repositories.UserRepo;
 import com.aryan.blogging.bloggingapis.utils.Constants;
+import com.nimbusds.oauth2.sdk.Message;
+
+import jakarta.mail.Authenticator;
+import jakarta.mail.MessagingException;
+import jakarta.mail.PasswordAuthentication;
+import jakarta.mail.Session;
+import jakarta.mail.Transport;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeBodyPart;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMessage.RecipientType;
+import jakarta.mail.internet.MimeMultipart;
 
 
 
@@ -82,7 +85,7 @@ public class EmailService {
             mimeMessage.setFrom(Constants.sender);
             
             //add recipients
-            mimeMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(recepient));//For many recepients create array of InternetAddresse
+            mimeMessage.addRecipient(RecipientType.TO, new InternetAddress(recepient));//For many recepients create array of InternetAddresse
             mimeMessage.setSubject(Constants.subject);
             
             int otp=otpService.generateOTP(recepient);
@@ -152,7 +155,7 @@ public class EmailService {
                 mimeMessage.setFrom(Constants.sender);
                 
                 //add recipients
-                mimeMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(Constants.recepient));//For many recepients create array of InternetAddresse
+                mimeMessage.addRecipient(RecipientType.TO, new InternetAddress(Constants.recepient));//For many recepients create array of InternetAddresse
                 mimeMessage.setSubject(Constants.subject);
                 //mimeMessage.setText(Constants.message);
                 

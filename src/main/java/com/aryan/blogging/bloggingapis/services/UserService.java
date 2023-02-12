@@ -1,8 +1,11 @@
 package com.aryan.blogging.bloggingapis.services;
 
 import java.util.List;
+import java.util.Set;
 
+import com.aryan.blogging.bloggingapis.payload.CategoryDTO;
 import com.aryan.blogging.bloggingapis.payload.PasswordChangeDTO;
+import com.aryan.blogging.bloggingapis.payload.SubscriptionDTO;
 import com.aryan.blogging.bloggingapis.payload.UserDTO;
 import com.aryan.blogging.bloggingapis.utils.Constants.PasswordChangeStatus;
 
@@ -11,9 +14,9 @@ public interface UserService {
 	
 	UserDTO createUser(UserDTO user);
 	
-	UserDTO updateUser(UserDTO user, Integer userId);
+	UserDTO updateUser(UserDTO user);
 	
-	UserDTO getUserById(int userId);
+	UserDTO getUserByEmail(String email);
 	
 	List<UserDTO> getAllUsers();
 	
@@ -22,4 +25,8 @@ public interface UserService {
 	PasswordChangeStatus changePassword(PasswordChangeDTO passwordChangeDTO);
 
 	PasswordChangeStatus forgotPassword(PasswordChangeDTO passwordChangeDTO);
+	
+	Boolean checkAvailibility(String email);
+	
+	
 }

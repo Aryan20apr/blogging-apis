@@ -1,7 +1,9 @@
 package com.aryan.blogging.bloggingapis.services;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
@@ -9,9 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.aryan.blogging.bloggingapis.entities.Category;
+import com.aryan.blogging.bloggingapis.entities.User;
 import com.aryan.blogging.bloggingapis.exceptions.ResourceNotFoundException;
 import com.aryan.blogging.bloggingapis.payload.CategoryDTO;
+import com.aryan.blogging.bloggingapis.payload.SubscriptionDTO;
 import com.aryan.blogging.bloggingapis.repositories.CategoryRepo;
+import com.aryan.blogging.bloggingapis.repositories.UserRepo;
 
 
 
@@ -21,6 +26,9 @@ public class CategoryServiceImpl implements CategoryService{
 
     @Autowired
     private CategoryRepo categoryRepo;
+    
+    @Autowired
+    private UserRepo userRepo;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -68,5 +76,59 @@ public class CategoryServiceImpl implements CategoryService{
        
         return categoryDTOs;
     }
+    
+    @Override
+    public List<CategoryDTO> getUserCategory(int userid) {
+        
+        User user=userRepo.findById(userid).get();
+        
+        List<Category> categories=new ArrayList<>(user.getCategories());
+        
+       List<CategoryDTO> categoryDTOs= categories.stream().map((cat)-> this.modelMapper.map(cat, CategoryDTO.class)).collect(Collectors.toList());
+       
+        return categoryDTOs;
+    }
+    
+    @Override
+    public boolean subscribeCategories(SubscriptionDTO subscriptions) {
+       
+        User user=userRepo.findById(subscriptions.getUserid()).get();
+        
+        for(int id:subscriptions.getCatids())
+        {
+            Category category=categoryRepo.findById(id).get();
+            user.getCategories().add(category);
+        }
+        userRepo.save(user);
+        return true;
+    }
+    @Override
+    public boolean unsubscribeCategories(SubscriptionDTO subscriptions) {
+       
+        User user=userRepo.findById(subscriptions.getUserid()).get();
+        Set<Category> oldCategories= user.getCategories();
+       // user.getCategories().removeAll(subscriptions.getCatids());
+        Set<Category> newCategories=new HashSet<>();
+        
+        for(int id:subscriptions.getCatids())
+        {
+           for(Category c:oldCategories)
+           {
+               System.out.println("Id="+id);
+               if(id==c.getCategoryId())
+               {
+                   System.out.println("### Id="+c.getCategoryId());
+                      oldCategories.remove(c);
+                   break;}
+           }
+           // System.out.println("b="+b);
+        }
+        user.setCategories(oldCategories);
+        userRepo.save(user);
+        return true;
+    }
+
+    
+    
     
 }

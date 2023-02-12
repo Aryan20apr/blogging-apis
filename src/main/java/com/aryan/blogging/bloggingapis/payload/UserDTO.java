@@ -3,11 +3,11 @@ package com.aryan.blogging.bloggingapis.payload;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.validation.constraints.Email;
+import com.aryan.blogging.bloggingapis.entities.Category;
 
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
-
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -33,6 +33,7 @@ public class UserDTO {
 	private String email;
 	
 	
+	
 	//@NotNull
 	// @NotBlank
 	@Size(min = 8,max=15,message = "Password must have atleast 6 characters and maximum 15 characters with atleast one Capital letter, special chracter and digit")
@@ -43,6 +44,10 @@ public class UserDTO {
 	@Size(min = 20,max=150,message = "About cannot be less than 20 characters")
 	private String about;
 
-	private Set<RoleDTO> roles = new HashSet<>();
-
+	//private Set<RoleDTO> roles = new HashSet<>();
+	
+	String image;
+	String imageurl;
+	
+	
 }

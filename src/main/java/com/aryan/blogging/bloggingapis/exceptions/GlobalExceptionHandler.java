@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.aryan.blogging.bloggingapis.payload.ApiResponse;
+import com.aryan.blogging.bloggingapis.payload.UserDTO;
 
 //@ControllerAdvice  Instead use
 @RestControllerAdvice // With this we need not use @ResponseBody
@@ -24,6 +25,17 @@ public class GlobalExceptionHandler {
         String message = e.getMessage();
         ApiResponse<?> apiResponse = new ApiResponse<>(null,message, false);
         return new ResponseEntity<ApiResponse<?>>(apiResponse, HttpStatus.OK);
+    }
+    @ExceptionHandler(UserAlreadyExistException.class)
+    public ResponseEntity<ApiResponse<UserDTO>> handleApiException(UserAlreadyExistException exception)
+
+    {
+        String message = exception.getMessage();
+        Map<String,UserDTO> map= new HashMap<>();
+        map.put("user", exception.user);
+        ApiResponse<UserDTO> response=new ApiResponse<>(exception.user, message,false);
+        return new ResponseEntity<ApiResponse<UserDTO>>(response, HttpStatus.OK);
+
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

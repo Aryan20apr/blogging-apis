@@ -2,7 +2,7 @@ package com.aryan.blogging.bloggingapis.controller;
 
 
 
-import javax.validation.Valid;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.aryan.blogging.bloggingapis.payload.ApiResponse;
@@ -22,6 +23,8 @@ import com.aryan.blogging.bloggingapis.payload.PasswordChangeDTO;
 import com.aryan.blogging.bloggingapis.payload.UserDTO;
 import com.aryan.blogging.bloggingapis.services.UserService;
 import com.aryan.blogging.bloggingapis.utils.Constants.PasswordChangeStatus;
+
+import jakarta.validation.Valid;
 
 import java.util.List;
 
@@ -43,10 +46,10 @@ public class UserController {
     }
 
     //PUT- user update
-    @PutMapping("/{userId}") //userId is path URI variable
-    public ResponseEntity<ApiResponse<UserDTO>> updateUser(@Valid @RequestBody UserDTO userDTO,@PathVariable("userId") Integer uid)
+    @PutMapping("/") //userId is path URI variable
+    public ResponseEntity<ApiResponse<UserDTO>> updateUser(@Valid @RequestBody UserDTO userDTO)
     {
-        UserDTO updatedUser=this.userService.updateUser(userDTO, uid);
+        UserDTO updatedUser=this.userService.updateUser(userDTO);
         ApiResponse<UserDTO> apiResponse=new ApiResponse<UserDTO>(updatedUser,"User created successfully",true);
         return new ResponseEntity<ApiResponse<UserDTO>>(apiResponse,HttpStatus.CREATED);
         
@@ -93,8 +96,8 @@ public class UserController {
     // }
         @PreAuthorize("hasRole('ADMIN')")//uSER WILL admin role will only have this method's access
         //Annotation for specifying a method access-control expression which will be evaluated to decide whether a method invocation is allowed or not.
-        @DeleteMapping("/{userId}")
-      public ResponseEntity<ApiResponse<Integer>> deleteUser(@PathVariable("userId") Integer uid)
+     @DeleteMapping("/")
+      public ResponseEntity<ApiResponse<Integer>> deleteUser(@RequestParam Integer uid)
     {
         this.userService.deleteUser(uid);
         
@@ -110,10 +113,10 @@ public class UserController {
     }
 
         //GET- get single user
-        @GetMapping("/{userid}")
-        public ResponseEntity<ApiResponse<UserDTO>> getSingleUser(@PathVariable("userid") Integer uid)
+        @GetMapping("/single")
+        public ResponseEntity<ApiResponse<UserDTO>> getSingleUser(@RequestParam("email") String email)
         {
-            ApiResponse<UserDTO> apiResponse=new ApiResponse<UserDTO>(this.userService.getUserById(uid),"User obtained ",true); 
+            ApiResponse<UserDTO> apiResponse=new ApiResponse<UserDTO>(this.userService.getUserByEmail(email),"User obtained ",true); 
             return ResponseEntity.ok(apiResponse);
         }
 

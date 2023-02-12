@@ -1,6 +1,5 @@
 package com.aryan.blogging.bloggingapis.payload;
 
-import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -12,7 +11,7 @@ import lombok.Setter;
 @Getter
 @Setter
 // @NoArgsConstructor
-public class PostDto {
+public class UserPostDTO {
 
     private Integer postId;
 
@@ -33,11 +32,5 @@ public class PostDto {
     // lead to the recursion
     private CategoryDTO category;
 
-    private UserResponseDTO user;
-
-    //private Set<CommentDto> comments = new HashSet<>();// With this we can get the comment of post with the post itself
-
-    public PostDto() {
-        System.out.println("Inside default PostDto constructor");
-    }
+   
 }

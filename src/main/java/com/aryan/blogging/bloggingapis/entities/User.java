@@ -8,18 +8,18 @@ import java.util.Set;
 
 import java.util.stream.Collectors;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -49,8 +49,10 @@ public class User implements UserDetails {
 	private String lastname;
 	@Column(name = "email", nullable = false, length = 50)
 	private String email;
-	
-	
+	@Column(name = "image", nullable = true, length = 200)
+	private String imageName;
+
+	private String imageurl;
 
 	@Column(name = "password", nullable = false, length = 150)
 	private String password;
@@ -63,8 +65,14 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY ) // Single post can have many comments
 	private Set<Comment> comments = new HashSet<>();
+    
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "user_subscriptions",
+    joinColumns = { @JoinColumn(name = "user_id") },
+    inverseJoinColumns = { @JoinColumn(name = "cat_id") })
+    private Set<Category> categories=new HashSet<>();
 
-	@ManyToMany(cascade=CascadeType.ALL,fetch = FetchType.LAZY)//When use is created, role also created 
+	@ManyToMany(cascade= {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH},fetch = FetchType.EAGER)//When use is created, role also created 
 	@JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "role", referencedColumnName = "id"))
 	private Set<Role> roles = new HashSet<>();
 

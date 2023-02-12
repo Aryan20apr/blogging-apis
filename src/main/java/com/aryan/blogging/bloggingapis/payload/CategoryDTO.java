@@ -1,8 +1,15 @@
 package com.aryan.blogging.bloggingapis.payload;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
 
+
+
+import java.util.HashSet;
+import java.util.Set;
+
+import com.aryan.blogging.bloggingapis.entities.User;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -25,4 +32,5 @@ public class CategoryDTO {
     @Size(min=4,max = 200,message = "Description must have at most 200 characters and must not be blank")
     private String categoryDescription;
     
+    // private Set<User> users=new HashSet<>();
 }
