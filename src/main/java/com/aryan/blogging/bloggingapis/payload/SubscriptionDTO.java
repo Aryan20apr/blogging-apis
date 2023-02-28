@@ -15,6 +15,7 @@ import lombok.Setter;
 public class SubscriptionDTO {
     
     Integer userid;
+    String fcmtoken;
     List<Integer> catids=new ArrayList<>();
 
 }

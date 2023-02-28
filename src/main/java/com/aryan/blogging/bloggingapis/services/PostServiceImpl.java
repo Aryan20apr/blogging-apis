@@ -43,6 +43,9 @@ private MyBlobService blobService;
 
     @Autowired
     private CategoryRepo categoryRepo;//For getting the category
+    
+    @Autowired
+    private FirebaseFcmServiceImpl firebaseFcmServiceImpl;
 
     @Override
     public PostCreationDTO createPost(PostDto postDto,Integer userId,Integer categoryId) {
@@ -55,6 +58,8 @@ private MyBlobService blobService;
         post.setUser(user);
         post.setCategory(category);
         Post newPost=this.postRepo.save(post);
+        
+        firebaseFcmServiceImpl.sendMessageToTopic(categoryId);
 
         return this.modelMapper.map(newPost,PostCreationDTO.class);
     }

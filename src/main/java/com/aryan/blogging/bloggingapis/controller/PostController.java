@@ -43,11 +43,7 @@ public class PostController {
     @Autowired
     private PostService postService;
 
-    @Autowired
-    private FileService fileService;
-    
-    @Autowired
-    private MyBlobService blobService;
+ 
 
     @Value("${project.image}")
     private String path;

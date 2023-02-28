@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.aryan.blogging.bloggingapis.payload.ApiResponse;
 import com.aryan.blogging.bloggingapis.payload.UserDTO;
+import com.google.firebase.messaging.FirebaseMessagingException;
 
 //@ControllerAdvice  Instead use
 @RestControllerAdvice // With this we need not use @ResponseBody
@@ -53,6 +54,16 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ApiException.class)
     public ResponseEntity<ApiResponse<?>> handleApiException(ApiException exception)
+
+    {
+        String message = exception.getMessage();
+        ApiResponse<?> apiResponse = new ApiResponse<>(null,message, false);
+        return new ResponseEntity<ApiResponse<?>>(apiResponse, HttpStatus.OK);
+
+    }
+    
+    @ExceptionHandler(FirebaseMessagingException.class)
+    public ResponseEntity<ApiResponse<?>> handleMessageException(FirebaseMessagingException exception)
 
     {
         String message = exception.getMessage();

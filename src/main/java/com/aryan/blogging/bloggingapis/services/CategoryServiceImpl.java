@@ -29,6 +29,9 @@ public class CategoryServiceImpl implements CategoryService{
     
     @Autowired
     private UserRepo userRepo;
+    
+    @Autowired
+    private FirebaseFcmServiceImpl firebaseFcmService;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -97,7 +100,9 @@ public class CategoryServiceImpl implements CategoryService{
         for(int id:subscriptions.getCatids())
         {
             Category category=categoryRepo.findById(id).get();
+            
             user.getCategories().add(category);
+            firebaseFcmService.subscribeNotification(subscriptions.getFcmtoken(), category.getCategoryId().toString());
         }
         userRepo.save(user);
         return true;
@@ -108,7 +113,7 @@ public class CategoryServiceImpl implements CategoryService{
         User user=userRepo.findById(subscriptions.getUserid()).get();
         Set<Category> oldCategories= user.getCategories();
        // user.getCategories().removeAll(subscriptions.getCatids());
-        Set<Category> newCategories=new HashSet<>();
+        //Set<Category> newCategories=new HashSet<>();
         
         for(int id:subscriptions.getCatids())
         {
@@ -119,6 +124,7 @@ public class CategoryServiceImpl implements CategoryService{
                {
                    System.out.println("### Id="+c.getCategoryId());
                       oldCategories.remove(c);
+                      firebaseFcmService.unsubscribeNotification(subscriptions.getFcmtoken(), c.getCategoryId().toString());
                    break;}
            }
            // System.out.println("b="+b);

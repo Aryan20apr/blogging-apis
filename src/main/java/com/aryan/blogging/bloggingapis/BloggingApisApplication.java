@@ -1,5 +1,6 @@
 package com.aryan.blogging.bloggingapis;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.modelmapper.ModelMapper;
@@ -8,6 +9,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
@@ -16,6 +18,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import com.aryan.blogging.bloggingapis.entities.Role;
 import com.aryan.blogging.bloggingapis.repositories.RoleRepo;
 import com.aryan.blogging.bloggingapis.utils.Constants;
+import com.google.auth.oauth2.GoogleCredentials;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 @SpringBootApplication
 public class BloggingApisApplication implements CommandLineRunner{
@@ -68,6 +74,19 @@ public class BloggingApisApplication implements CommandLineRunner{
 	            configurer.defaultContentType(MediaType.APPLICATION_JSON);
 	        }
 	    };
+	}
+	
+	@Bean
+	FirebaseMessaging firebaseMessaging() throws IOException {
+	    GoogleCredentials googleCredentials = GoogleCredentials
+	            .fromStream(new  ClassPathResource("firebase-service-account.json").getInputStream());
+	   System.out.println("GoogleCredentials is null"+(googleCredentials==null));
+	    FirebaseOptions firebaseOptions = FirebaseOptions
+	            .builder()
+	            .setCredentials(googleCredentials)
+	            .build();
+	    FirebaseApp app = FirebaseApp.initializeApp(firebaseOptions);
+	    return FirebaseMessaging.getInstance(app);
 	}
 
 
