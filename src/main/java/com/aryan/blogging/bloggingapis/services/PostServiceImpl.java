@@ -92,7 +92,7 @@ private MyBlobService blobService;
 
     @Override
     public List<PostDto> getAllPost() {
-        List<Post> posts=this.postRepo.findAll();
+        List<Post> posts=this.postRepo.findAllByOrderByIdDesc();
 
         List<PostDto> postDtos=posts.stream().map((post)->this.modelMapper.map(post,PostDto.class)).collect(Collectors.toList());        
         return postDtos;
