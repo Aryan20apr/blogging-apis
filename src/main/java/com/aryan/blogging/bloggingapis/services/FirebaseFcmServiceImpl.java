@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.aryan.blogging.bloggingapis.entities.Post;
 import com.google.firebase.messaging.AndroidConfig;
 import com.google.firebase.messaging.AndroidConfig.Priority;
 import com.google.firebase.messaging.AndroidFcmOptions;
@@ -21,20 +22,27 @@ public class FirebaseFcmServiceImpl {
     @Autowired
     private FirebaseMessaging firebaseMessaging;
     
-    public void sendMessageToTopic(Integer catId)
+    public void sendMessageToTopic(Post post)
     {
-        String topic="CAT_"+catId;
+        String topic="CAT_"+post.getCategory().getCategoryId();
         AndroidFcmOptions androidFcmOptions = AndroidFcmOptions.builder().setAnalyticsLabel("AnalyticsLabel").build();
      // See documentation on defining a message payload.
-        Notification notification=Notification.builder().setTitle("BlogPost").setBody("Here is a new article for you").build();
+        Notification notification=Notification.builder().setTitle("Checkout this new article").setBody(post.getTitle()).build();
         Message message = Message.builder()
                 .setAndroidConfig(
                         AndroidConfig.builder()
                                 .setPriority(Priority.HIGH)
                                 .setFcmOptions(androidFcmOptions)
                                 .build())
-                .putData("Categoryid", catId.toString())
-                .putData("Description", "A new article has been added!")
+                .putData("postId", post.getId().toString())
+                .putData("title", post.getTitle())
+                .putData("content",post.getContent())
+                .putData("imageName", post.getImageName()==null?"":post.getImageName())
+                .putData("imageUrl",post.getImageUrl()==null?"":post.getImageUrl())
+                .putData("addedDate", post.getAddedDate())
+                .putData("firstName", post.getUser().getFirstname())
+                .putData("lastName",post.getUser().getLastname())
+                .putData("category", post.getCategory().getCategoryTitle())
                 .setTopic(topic)
                 .setNotification(notification)
                 .build();

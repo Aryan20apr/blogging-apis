@@ -1,6 +1,7 @@
 package com.aryan.blogging.bloggingapis.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.context.annotation.Bean;
@@ -62,6 +63,10 @@ public class SecurityConfig {
 
     @Autowired
     private JwtAuthenticationFilter jwtAuthenticationFilter;
+    
+//    @Autowired
+//    @Qualifier("handlerExceptionResolver")
+//    private HandlerExceptionResolver exceptionResolver;
 
     public static final String[] PUBLIC_URLS = { "/api/auth/**","/api/auth/login",
             "/v3/api-docs", "/v2/api-docs",
@@ -73,7 +78,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf()
-                .disable()
+                .disable()// Disable csrf as we are not using form login, we are using RestEndpoint.
                 .authorizeHttpRequests()
                 .requestMatchers(PUBLIC_URLS)
                  .permitAll()

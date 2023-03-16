@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.aryan.blogging.bloggingapis.entities.Comment;
@@ -26,23 +27,23 @@ public class CommentController {
     @Autowired
     private CommentService commentService;
 
-    @PostMapping("/post/{postId}/user/{userId}")
-    public ResponseEntity<ApiResponse<CommentDto>> createComment(@RequestBody CommentDto comment,@PathVariable Integer postId,@PathVariable Integer userId)
+    @PostMapping("/co")
+    public ResponseEntity<ApiResponse<CommentDto>> createComment(@RequestBody CommentDto comment,@RequestParam Integer postId,@RequestParam Integer userId)
     {
         CommentDto newComment=this.commentService.createComment(comment, postId,userId);
         ApiResponse<CommentDto> apiResponse=new ApiResponse<CommentDto>(newComment,"Commented Successfully",true);
         return new ResponseEntity<ApiResponse<CommentDto>>(apiResponse,HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/{commentId}")
-    public ResponseEntity<ApiResponse<Integer>> deleteComment(@PathVariable Integer commentId)
+    @DeleteMapping("/co")
+    public ResponseEntity<ApiResponse<Integer>> deleteComment(@RequestParam Integer id)
     {
-       commentService.deleteComment(commentId);
-        return new ResponseEntity<ApiResponse<Integer>>(new ApiResponse<Integer>(commentId,"Cpmment Deleted",true),HttpStatus.OK);
+       commentService.deleteComment(id);
+        return new ResponseEntity<ApiResponse<Integer>>(new ApiResponse<Integer>(id,"Cpmment Deleted",true),HttpStatus.OK);
     }
     
-    @GetMapping("/{postId}")
-    public ResponseEntity<ApiResponse<List<CommentDto>>> getAllCommentsOfPost(@PathVariable Integer postId)
+    @GetMapping("/co")
+    public ResponseEntity<ApiResponse<List<CommentDto>>> getAllCommentsOfPost(@RequestParam Integer postId)
     {
        List<CommentDto> comments=commentService.getAllComments(postId);
        ApiResponse<List<CommentDto>> apiResponse=new ApiResponse<List<CommentDto>>(comments,"Comments of post obtained",true);

@@ -3,10 +3,12 @@ package com.aryan.blogging.bloggingapis.security;
 import java.io.IOException;
 import java.util.Enumeration;
 
-
-
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.core.style.ToStringCreator;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,9 +17,14 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.servlet.HandlerExceptionResolver;
+
+import com.aryan.blogging.bloggingapis.exceptions.InvalidTokenHeaderException;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -31,44 +38,44 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Autowired
     private JwtTokenHelper jwtTokenHelper;
+    
+    @Autowired
+    @Qualifier("handlerExceptionResolver")
+    private HandlerExceptionResolver exceptionResolver;
+    
+    Logger logger=LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 
     // This is called everytime the API request is hit
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-
+        try {
         // 1. Get Token
         String requestTokenHeader = request.getHeader("Authorization");// Key of the token which we will send in header
-        Enumeration<String> headerNames = request.getHeaderNames();
-
-		while(headerNames.hasMoreElements())
-		{
-			System.out.println(headerNames.nextElement());
-		}
+//        Enumeration<String> headerNames = request.getHeaderNames();
+//
+//		while(headerNames.hasMoreElements())
+//		{
+//			logger.info(headerNames.nextElement());
+//		}
          /* Token is contained in
          * Bearer 2352523dgsg
          */
-        System.out.println("Request Token Header " + requestTokenHeader);
+        logger.info("Request Token Header " + requestTokenHeader);
 
         String username = null;
         String token = null;
-
+        logger.info("username " + username);
         if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer")) {
-            token = requestTokenHeader.substring((7));// Actual token starts from the 7 th index
-            try {
+            token = requestTokenHeader.substring(7);// Actual token starts from the 7 th index
+           
                 username = jwtTokenHelper.getUsernameFromToken(token);
-            } catch (IllegalArgumentException e) {
-                System.out.println("Unable to get jwt token " + e.getMessage());
-            } catch (ExpiredJwtException e) {
-                System.out.println("Jwt Token Expired " + e.getMessage());
-            } catch (MalformedJwtException e1) {
-                System.out.println("Invalid Jwt " + e1.getMessage());
-            }
-        } else {
-            System.out.println("Jwt token does not begin with Bearer");
-        }
+            
+//        } else {
+//            System.out.println("Jwt token does not begin with Bearer");
+//        }
         //Authentication auth=SecurityContextHolder.getContext().getAuthentication();
-        System.out.println("Username="+username);
+        logger.info("Username="+username);
         //once we get the token, now validate
         /**
          * SecurityContext-Interface defining the minimum security information associated with the current thread of execution.
@@ -87,16 +94,51 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 //https://www.baeldung.com/manually-set-user-authentication-spring-security
             }
+            else {
+                System.out.println(" jwt token validation returned false");
+            }
+        }
             else
             {
-                System.out.println("Invalid Jwt Token");
-            }
+                logger.info("Invalid JWT Token");
+                exceptionResolver.resolveException(request, response, null,
+                        new InvalidTokenHeaderException(
+                                "username is null: " + (username == null) + " authentication in context is null: "
+                                        + (SecurityContextHolder.getContext().getAuthentication())));
+                            }
         }
         else
         {
-            System.out.println("Username is null or context is not null");
+            logger.info("Username is null or context is not null");
         }
-        filterChain.doFilter(request, response);
+       // filterChain.doFilter(request, response);
+        
+        filterChain.doFilter(request, response);}
+       
+     catch (ExpiredJwtException e) {
+         logger.info("Exception is 1"+e.toString());
+         exceptionResolver.resolveException(request, response, null,
+                new InvalidTokenHeaderException("Token is expired"));
+    } catch (UnsupportedJwtException e) {
+        logger.info("Exception is 2"+e.toString());
+        exceptionResolver.resolveException(request, response, null,
+                new InvalidTokenHeaderException(e.getMessage()));
+    } catch (MalformedJwtException e) {
+        logger.info("Exception is 3"+e.toString());
+        exceptionResolver.resolveException(request, response, null,
+                new InvalidTokenHeaderException(e.getMessage()));
+    } catch (SignatureException e) {
+        logger.info("Exception is 3"+e.toString());
+        exceptionResolver.resolveException(request, response, null,
+                new InvalidTokenHeaderException(e.getMessage()));
+    } catch (IllegalArgumentException e) {
+        logger.info("Exception is "+e.toString());
+        exceptionResolver.resolveException(request, response, null,
+                new InvalidTokenHeaderException(e.getMessage()));
+    } catch (InvalidTokenHeaderException e) {
+        logger.info("Exception is 4"+e.toString());
+        exceptionResolver.resolveException(request, response, null, e);
+    }
     }
 
     

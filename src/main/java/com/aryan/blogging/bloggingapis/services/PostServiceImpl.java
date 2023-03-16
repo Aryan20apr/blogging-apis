@@ -59,7 +59,7 @@ private MyBlobService blobService;
         post.setCategory(category);
         Post newPost=this.postRepo.save(post);
         
-        firebaseFcmServiceImpl.sendMessageToTopic(categoryId);
+        firebaseFcmServiceImpl.sendMessageToTopic(newPost);
 
         return this.modelMapper.map(newPost,PostCreationDTO.class);
     }

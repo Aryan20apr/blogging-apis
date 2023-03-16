@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -26,9 +27,9 @@ import com.google.firebase.messaging.FirebaseMessaging;
 @SpringBootApplication
 public class BloggingApisApplication implements CommandLineRunner{
 
-	@Autowired
-	private PasswordEncoder passwordEncoder;
-
+//	@Autowired
+//	private PasswordEncoder passwordEncoder;
+//
 	@Autowired
 	private RoleRepo roleRepo;
 	public static void main(String[] args) {
@@ -43,7 +44,7 @@ public class BloggingApisApplication implements CommandLineRunner{
 
 	@Override
 	public void run(String... args) throws Exception {
-		System.out.println(this.passwordEncoder.encode("xyz"));
+		//System.out.println(this.passwordEncoder.encode("xyz"));
 		
 		
 		try {
@@ -89,5 +90,8 @@ public class BloggingApisApplication implements CommandLineRunner{
 	    return FirebaseMessaging.getInstance(app);
 	}
 
+
+
+	
 
 }

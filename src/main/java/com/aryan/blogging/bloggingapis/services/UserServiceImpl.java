@@ -2,6 +2,7 @@ package com.aryan.blogging.bloggingapis.services;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 
@@ -134,6 +135,11 @@ public class UserServiceImpl implements UserService {
 	public UserDTO userToDTO(User user)
 	{
 		UserDTO userdto=this.modelMapper.map(user,UserDTO.class);
+		Set<Category> categories=user.getCategories();
+		for(Category cat:categories)
+		{
+		    userdto.getCatids().add(cat.getCategoryId());
+		}
 		return userdto;
 	}
 

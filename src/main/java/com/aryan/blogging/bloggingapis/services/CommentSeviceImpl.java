@@ -43,9 +43,13 @@ public class CommentSeviceImpl implements CommentService{
         comment.setPost(post);
         comment.setUser(user);
         comment.setDate(date);
+        comment.setFirstName(user.getFirstname());
+        comment.setLastName(user.getLastname());
         Comment savedcomment=commentRepo.save(comment);
 
-        return modelMapper.map(savedcomment,CommentDto.class);
+        commentDto= modelMapper.map(savedcomment,CommentDto.class);
+        
+        return commentDto;
      }
 
     @Override

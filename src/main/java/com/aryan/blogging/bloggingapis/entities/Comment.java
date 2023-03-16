@@ -38,4 +38,6 @@ public class Comment {
      @ManyToOne//One comment can be made by one user only
      private User user;
     
+     private String firstName;
+     private String lastName;
 }

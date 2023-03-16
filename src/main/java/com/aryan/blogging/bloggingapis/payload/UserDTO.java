@@ -1,6 +1,8 @@
 package com.aryan.blogging.bloggingapis.payload;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import com.aryan.blogging.bloggingapis.entities.Category;
@@ -49,5 +51,6 @@ public class UserDTO {
 	String image;
 	String imageurl;
 	
+	List<Integer> catids=new ArrayList<>();
 	
 }

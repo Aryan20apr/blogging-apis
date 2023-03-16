@@ -66,8 +66,8 @@ public class PostController {
         return new ResponseEntity<ApiResponse<List<UserPostDTO>>>(apiResponse, HttpStatus.OK);
     }
 
-    @GetMapping("/category/{categoryId}/posts")
-    public ResponseEntity<ApiResponse<List<PostDto>>> getPostByCategory(@PathVariable Integer categoryId) {
+    @GetMapping("/category/posts")
+    public ResponseEntity<ApiResponse<List<PostDto>>> getPostByCategory(@RequestParam Integer categoryId) {
         List<PostDto> posts = this.postService.getPostByCategory(categoryId);
         ApiResponse<List<PostDto>> apiResponse=new ApiResponse<>(posts,"Posts in the category",true);
         return new ResponseEntity<ApiResponse<List<PostDto>>>(apiResponse, HttpStatus.OK);
