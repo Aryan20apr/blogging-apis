@@ -9,7 +9,6 @@ import com.aryan.blogging.bloggingapis.entities.Category;
 
 public interface CategoryRepo extends JpaRepository<Category,Integer>{
     
-   
     
     
 }
