@@ -80,7 +80,7 @@ public class GlobalExceptionHandler {
         System.out.println("error message: "+error);
         errors.put(fieldName, error);
         
-        System.out.println("Inside hadleAuthResponse");
+        System.out.println("Inside hadleAuthResponse "+ex.getMessage());
         ApiResponse<?> apiResponse = new ApiResponse<>(errors,"Logging Out", false);
         return new ResponseEntity<ApiResponse<?>>(apiResponse, HttpStatus.UNAUTHORIZED);
     }
