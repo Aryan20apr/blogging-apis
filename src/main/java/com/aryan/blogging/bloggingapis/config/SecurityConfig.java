@@ -1,9 +1,12 @@
 package com.aryan.blogging.bloggingapis.config;
 
+import java.util.ArrayList;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.configurationprocessor.json.JSONException;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -111,7 +114,7 @@ public class SecurityConfig {
             response.setContentType("application/json;charset=UTF-8");
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             try {
-                response.getWriter().write(new JSONObject().put("data", null).put("message", "Access Denied").put("success", false).toString());
+                response.getWriter().write(new JSONObject().put("data",new ArrayList<>()).put("message", "Access Denied").put("success", false).toString());
             } catch (JSONException e1) {
                 // TODO Auto-generated catch block
                 e1.printStackTrace();
