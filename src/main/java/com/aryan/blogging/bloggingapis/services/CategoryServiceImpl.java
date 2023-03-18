@@ -72,7 +72,16 @@ public class CategoryServiceImpl implements CategoryService{
     }
 
     @Override
-    public List<CategoryDTO> getAllCategory() {
+    public List<CategoryDTO> getAllUnSubscribedCategory(int id) {
+        List<Category> categories=this.categoryRepo.getUnsubscribedCategories(id);
+        
+       List<CategoryDTO> categoryDTOs= categories.stream().map((cat)-> this.modelMapper.map(cat, CategoryDTO.class)).collect(Collectors.toList());
+       
+        return categoryDTOs;
+    }
+    
+    @Override
+    public List<CategoryDTO> getAllCategories() {
         List<Category> categories=this.categoryRepo.findAll();
         
        List<CategoryDTO> categoryDTOs= categories.stream().map((cat)-> this.modelMapper.map(cat, CategoryDTO.class)).collect(Collectors.toList());

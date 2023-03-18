@@ -66,10 +66,19 @@ public class CategoryController {
 
     }
 
+    @GetMapping("/newcategories")
+    public ResponseEntity<ApiResponse<List<CategoryDTO>>> getUnsubscibedCategories(@RequestParam int id) {
+
+        List<CategoryDTO> list = this.categoryService.getAllUnSubscribedCategory(id);
+        ApiResponse<List<CategoryDTO>> apiResponse=new ApiResponse<List<CategoryDTO>>(list,"Category Obtained Successfully",true);
+        return new ResponseEntity<ApiResponse<List<CategoryDTO>>>(apiResponse, HttpStatus.OK);
+
+    }
+    
     @GetMapping("/categoryList")
     public ResponseEntity<ApiResponse<List<CategoryDTO>>> getAllCategory() {
 
-        List<CategoryDTO> list = this.categoryService.getAllCategory();
+        List<CategoryDTO> list = this.categoryService.getAllCategories();
         ApiResponse<List<CategoryDTO>> apiResponse=new ApiResponse<List<CategoryDTO>>(list,"Category Obtained Successfully",true);
         return new ResponseEntity<ApiResponse<List<CategoryDTO>>>(apiResponse, HttpStatus.OK);
 

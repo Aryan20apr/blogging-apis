@@ -15,7 +15,9 @@ public interface CategoryService {
 
     CategoryDTO getCategory(Integer id);
 
-    List<CategoryDTO> getAllCategory();
+    List<CategoryDTO> getAllUnSubscribedCategory(int id);
+    
+    List<CategoryDTO> getAllCategories();
     
     List<CategoryDTO> getUserCategory(int userid);
     
