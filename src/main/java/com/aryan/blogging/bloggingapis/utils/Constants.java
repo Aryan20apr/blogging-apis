@@ -21,7 +21,7 @@ public static String subject="Account Verification Code";
     
     public static String userName="aryanrandom20@gmail.com";
     
-    public static String password="twctnohubfniojcx";
+    public static String password="Aryan677#@2160";
     
     public static String gmailHost="smtp.gmail.com";//It is the server through which email has to be sent using Simple Mail transfer protocol
     
