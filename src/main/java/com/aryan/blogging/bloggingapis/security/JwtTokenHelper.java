@@ -18,7 +18,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 
 @Component//So that it can be autowired
 public class JwtTokenHelper {
-    public static final long JWT_TOKEN_VALIDITY =2*24*60*60*1000;//in milliseconds
+    public static final long JWT_TOKEN_VALIDITY =2*24*60*60*60*1000;//in milliseconds
 
     Logger logger =LoggerFactory.getLogger(JwtTokenHelper.class); 
     private String secret = "jwtTokenKey";

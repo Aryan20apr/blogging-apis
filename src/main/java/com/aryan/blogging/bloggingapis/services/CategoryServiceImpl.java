@@ -75,18 +75,14 @@ public class CategoryServiceImpl implements CategoryService{
     public List<CategoryDTO> getAllUnSubscribedCategory(int id) {
         List<Category> categories=this.categoryRepo.getUnsubscribedCategories(id);
         
-       List<CategoryDTO> categoryDTOs= categories.stream().map((cat)-> this.modelMapper.map(cat, CategoryDTO.class)).collect(Collectors.toList());
-       
-        return categoryDTOs;
+       return categories.stream().map((cat)-> this.modelMapper.map(cat, CategoryDTO.class)).collect(Collectors.toList());
     }
     
     @Override
     public List<CategoryDTO> getAllCategories() {
         List<Category> categories=this.categoryRepo.findAll();
         
-       List<CategoryDTO> categoryDTOs= categories.stream().map((cat)-> this.modelMapper.map(cat, CategoryDTO.class)).collect(Collectors.toList());
-       
-        return categoryDTOs;
+       return categories.stream().map((cat)-> this.modelMapper.map(cat, CategoryDTO.class)).collect(Collectors.toList());
     }
     
     @Override
@@ -96,9 +92,7 @@ public class CategoryServiceImpl implements CategoryService{
         
         List<Category> categories=new ArrayList<>(user.getCategories());
         
-       List<CategoryDTO> categoryDTOs= categories.stream().map((cat)-> this.modelMapper.map(cat, CategoryDTO.class)).collect(Collectors.toList());
-       
-        return categoryDTOs;
+       return categories.stream().map((cat)-> this.modelMapper.map(cat, CategoryDTO.class)).collect(Collectors.toList());
     }
     
     @Override
