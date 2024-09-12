@@ -51,9 +51,11 @@ public class EmailService {
         //User user=optional.get();
        // if(user==null)
         //    return false;
-        
+        /*
+         * The Properties class represents a persistent set of properties. The Properties can be saved to a stream or loaded from a stream. Each key and its corresponding value in the property list is a string.
+         */
         Properties properties=System.getProperties();
-        System.out.println(properties);
+        System.out.println("Properties in EmailService:"+properties.toString());
         
         //setting important information to properties object
         
@@ -64,7 +66,12 @@ public class EmailService {
         
         // Step-1 Get the session object
         
-        
+        /**
+         * Properties object that hold relevant properties. It is expected that the client supplies values for the properties listed in Appendix A of the Jakarta Mail spec (particularly mail.store.protocol, mail.transport.protocol, mail.host, mail.user, and mail.from) as the defaults are unlikely to work in all cases.
+
+authenticator Authenticator object used to call back to the application when a 
+user name and password is needed.
+         */
         Session session =Session.getInstance(properties, new Authenticator() {
 
             @Override
@@ -92,7 +99,7 @@ public class EmailService {
             String message=""
                     +"<div style='border:1px solid #e2e2e2; padding:20px'>"
                     +"<h1>"
-                    +"Your OTP is"
+                    +"Your OTP is "
                     +"<b>"+otp
                     +"</b>"
                     +"</n>"

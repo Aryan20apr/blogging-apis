@@ -1,5 +1,6 @@
 package com.aryan.blogging.bloggingapis.config;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 
 import org.json.JSONException;
@@ -9,7 +10,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 
@@ -85,6 +86,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests()
                 .requestMatchers(PUBLIC_URLS)
                  .permitAll()
+                 
                  //.requestMatchers(HttpMethod.GET)
                 // .permitAll()
                 .anyRequest()
@@ -142,7 +144,8 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        int strength=10;
+        return new BCryptPasswordEncoder(strength,new SecureRandom());
     }
     
 

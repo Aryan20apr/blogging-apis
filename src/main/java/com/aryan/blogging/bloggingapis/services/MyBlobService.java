@@ -60,7 +60,7 @@ public class MyBlobService {
         String urlString= blobClient.getBlobUrl();
         System.out.println("url of file is "+urlString);
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        blobClient.download(os);
+        blobClient.downloadStream(os);
         log.info("Download END");
         return os;
     }

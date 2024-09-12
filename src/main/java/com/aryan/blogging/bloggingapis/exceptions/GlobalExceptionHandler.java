@@ -15,6 +15,8 @@ import com.aryan.blogging.bloggingapis.payload.ApiResponse;
 import com.aryan.blogging.bloggingapis.payload.UserDTO;
 import com.google.firebase.messaging.FirebaseMessagingException;
 
+import io.jsonwebtoken.SignatureException;
+
 //@ControllerAdvice  Instead use
 @RestControllerAdvice // With this we need not use @ResponseBody
 public class GlobalExceptionHandler {
@@ -77,7 +79,7 @@ public class GlobalExceptionHandler {
         Map<String, String> errors = new HashMap<>();
         String fieldName = "errorMessage";
         String error = ex.getMessage();
-        System.out.println("error message: "+error);
+        System.out.println("error message: "+error+" Exception class"+ex.getClass().getName());
         errors.put(fieldName, error);
         
         System.out.println("Inside hadleAuthResponse "+ex.getMessage());
@@ -88,7 +90,16 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(InvalidTokenHeaderException.class) // add comma separated list of Exception classes
     public ResponseEntity<ApiResponse> invalidTokenException(InvalidTokenHeaderException ex) {
         String message = ex.getMessage();
+        System.out.println("Inside exception handler for invalidTokenException "+message);
         ApiResponse<String> apiResponse = new ApiResponse<>(message,"Token Expired, Loging Out",false );
+        return new ResponseEntity<ApiResponse>(apiResponse, HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(SignatureException.class) // add comma separated list of Exception classes
+    public ResponseEntity<ApiResponse> handleSignatureException(SignatureException ex) {
+        String message = ex.getMessage();
+        System.out.println("Inside exception handler for handleSignatureException "+message);
+        ApiResponse<String> apiResponse = new ApiResponse<>(message,"Token not matched, Loging Out",false );
         return new ResponseEntity<ApiResponse>(apiResponse, HttpStatus.FORBIDDEN);
     }
 }

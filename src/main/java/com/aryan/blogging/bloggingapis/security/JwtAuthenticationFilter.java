@@ -48,6 +48,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
+                 if (request.getServletPath().contains("/v3/api-docs") || request.getServletPath().contains("/swagger-ui")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
         try {
         // 1. Get Token
         String requestTokenHeader = request.getHeader("Authorization");// Key of the token which we will send in header
@@ -129,7 +133,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     } catch (SignatureException e) {
         logger.info("Exception is 3"+e.toString());
         exceptionResolver.resolveException(request, response, null,
-                new InvalidTokenHeaderException(e.getMessage()));
+                new SignatureException(e.getMessage()));
     } catch (IllegalArgumentException e) {
         logger.info("Exception is "+e.toString());
         exceptionResolver.resolveException(request, response, null,
