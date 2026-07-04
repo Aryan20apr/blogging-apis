@@ -1,10 +1,18 @@
 package com.aryan.blogging.bloggingapis.entities;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 
@@ -41,5 +49,10 @@ public class User {
 	@Column(name="about_user",nullable = false, length=200)
 	private String about;
 	
-	
+	//One user has multiple posts
+    @OneToMany(mappedBy="user",cascade=CascadeType.ALL,fetch=FetchType.LAZY)
+    private List<Post> posts=new ArrayList<>();
+
+	@OneToMany(mappedBy = "user",cascade = CascadeType.ALL)//Single post can have many comments
+ 	private Set<Comment> comments=new HashSet<>();
 }
