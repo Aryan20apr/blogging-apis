@@ -3,24 +3,37 @@ package com.aryan.blogging.bloggingapis.services;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-
+import com.aryan.blogging.bloggingapis.entities.Role;
 import com.aryan.blogging.bloggingapis.entities.User;
 import com.aryan.blogging.bloggingapis.exceptions.ResourceNotFoundException;
 import com.aryan.blogging.bloggingapis.payload.UserDTO;
+import com.aryan.blogging.bloggingapis.repositories.RoleRepo;
 import com.aryan.blogging.bloggingapis.repositories.UserRepo;
+import com.aryan.blogging.bloggingapis.utils.Constants;
 
 @Service
 public class UserServiceImpl implements UserService {
 	
+	
+
 	@Autowired
 	private UserRepo userRepo;
 
 	@Autowired 
 	ModelMapper modelMapper;
+
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+
+	@Autowired
+	private RoleRepo roleRepo;
 
 	@Override
 	public UserDTO createUser(UserDTO userdto) {
@@ -98,5 +111,23 @@ public class UserServiceImpl implements UserService {
 	{
 		UserDTO userdto=this.modelMapper.map(user,UserDTO.class);
 		return userdto;
+	}
+
+	@Override
+	public UserDTO registerNewUser(UserDTO userdto) {
+		
+		User user=modelMapper.map(userdto, User.class);
+
+		//encoded the password
+		user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+		// We assume that any user registering through the register API will be the normal user
+		Role role=this.roleRepo.findById((Constants.NORMAL_ROLE_ID)).get();
+
+		user.getRoles().add(role);
+		User newUser=this.userRepo.save(user);
+
+
+		return modelMapper.map(newUser, UserDTO.class);
 	}
 }
