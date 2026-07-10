@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collector;
+
 import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
@@ -50,7 +50,7 @@ public class User implements UserDetails {
 	@Column(name = "email", nullable = false, length = 50)
 	private String email;
 
-	@Column(name = "password", nullable = false, length = 50)
+	@Column(name = "password", nullable = false, length = 150)
 	private String password;
 	@Column(name = "about_user", nullable = false, length = 200)
 	private String about;
