@@ -78,4 +78,6 @@ public class UserController {
         {
             return ResponseEntity.ok(this.userService.getUserById(uid));
         }
+
+       
 }
