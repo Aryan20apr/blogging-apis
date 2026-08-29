@@ -1,10 +1,17 @@
 package com.aryan.blogging.bloggingapis.controller;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,18 +21,28 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.aryan.blogging.bloggingapis.config.Constants;
 import com.aryan.blogging.bloggingapis.payload.ApiResponse;
 import com.aryan.blogging.bloggingapis.payload.PostDto;
 import com.aryan.blogging.bloggingapis.payload.PostResponse;
+import com.aryan.blogging.bloggingapis.services.FileService;
 import com.aryan.blogging.bloggingapis.services.PostService;
+
+
 
 @RestController
 @RequestMapping("/api")
 public class PostController {
     @Autowired
     private PostService postService;
+
+    @Autowired
+    private FileService fileService;
+
+    @Value("${project.image}")
+    private String path;
 
     @PostMapping("user/{userId}/category/{categoryId}/posts") // Currently we are taking these in URL, but if there are
                                                               // many params, then we would have to use anothe pattern
@@ -102,5 +119,28 @@ public class PostController {
         List<PostDto> posts = postService.searchPosts(keyword);
         return new ResponseEntity<List<PostDto>>(posts, HttpStatus.OK);
     }
+    // post image upload
+
+
+    @PostMapping("/post/image/upload/{postId}")//PostId to identify the post whose image is uploaded
+    private ResponseEntity<PostDto> uploadImage(@RequestParam("image") MultipartFile file, @PathVariable Integer postId) throws IOException
+    {
+        PostDto postDto=postService.getPostById(postId);
+        String fileName=fileService.uploadImage(path, file); 
+        
+        postDto.setImageName(fileName);
+        this.postService.updatePost(postDto, postId);
+        
+        return new ResponseEntity<PostDto>(postDto,HttpStatus.OK);
+    }
+ //Method to serve files
+ @GetMapping(path="/post/image/download/{imageName}",produces=MediaType.IMAGE_PNG_VALUE)
+ public void downloadFile(@PathVariable("imageName") String imageName,HttpServletResponse response) throws IOException
+ {
+     InputStream resource = this.fileService.getResource(path,imageName);
+     response.setContentType(MediaType.IMAGE_PNG_VALUE);//Specify the type of content to be sent in response
+     StreamUtils.copy(resource, response.getOutputStream());//Put the data obtained from InputStream to the output Stream
+ }
+ 
 
 }
