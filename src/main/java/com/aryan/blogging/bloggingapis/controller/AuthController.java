@@ -20,6 +20,7 @@ import com.aryan.blogging.bloggingapis.payload.JwtAuthRequest;
 import com.aryan.blogging.bloggingapis.payload.JwtAuthResponse;
 import com.aryan.blogging.bloggingapis.payload.UserDTO;
 import com.aryan.blogging.bloggingapis.security.JwtTokenHelper;
+import com.aryan.blogging.bloggingapis.services.UserService;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -32,6 +33,9 @@ public class AuthController {
 
     @Autowired
     private AuthenticationManager authenticationManager;//to authenticate username and password
+
+    @Autowired
+    private UserService userService;
 
     @PostMapping("/login")
     public ResponseEntity<JwtAuthResponse> createToken(
@@ -65,6 +69,14 @@ public class AuthController {
         System.out.println("Invalid credentials "+e.getMessage());
         throw new ApiException("Invalid Username or password");//Exception("Invalid Username or password");
        }
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<UserDTO> register(@RequestBody UserDTO userDTO)
+    {
+        UserDTO registeredUser=userService.registerNewUser(userDTO);
+        return new ResponseEntity<UserDTO>(registeredUser,HttpStatus.CREATED);
+        
     }
     
 }
