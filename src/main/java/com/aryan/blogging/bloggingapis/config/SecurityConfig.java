@@ -1,15 +1,18 @@
 package com.aryan.blogging.bloggingapis.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.configurationprocessor.json.JSONException;
+import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
+
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -18,20 +21,19 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
+
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import com.aryan.blogging.bloggingapis.security.CustomUserDetailService;
 import com.aryan.blogging.bloggingapis.security.JwtAuthenticationEntryPoint;
 import com.aryan.blogging.bloggingapis.security.JwtAuthenticationFilter;
 
+
+import jakarta.servlet.http.HttpServletResponse;
+@EnableWebMvc
 @Configuration
 @EnableWebSecurity
-
-@EnableWebMvc
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableMethodSecurity
 public class SecurityConfig {
 
     // @Autowired
@@ -61,10 +63,14 @@ public class SecurityConfig {
 
     @Autowired
     private JwtAuthenticationFilter jwtAuthenticationFilter;
+    
+//    @Autowired
+//    @Qualifier("handlerExceptionResolver")
+//    private HandlerExceptionResolver exceptionResolver;
 
-    public static final String[] PUBLIC_URLS = { "/api/auth/**",
+    public static final String[] PUBLIC_URLS = { "/api/auth/**","/api/auth/login",
             "/v3/api-docs", "/v2/api-docs",
-            "/swagger-resources/**", "/swagger-ui/**",
+            "/swagger-resources/**", "/swagger-ui/**","/api/blob/**",
             "/webjars/**"
 
     };
@@ -72,12 +78,12 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf()
-                .disable()
+                .disable()// Disable csrf as we are not using form login, we are using RestEndpoint.
                 .authorizeHttpRequests()
-                .antMatchers(PUBLIC_URLS)
-                .permitAll()
-                 .antMatchers(HttpMethod.GET)
+                .requestMatchers(PUBLIC_URLS)
                  .permitAll()
+                 //.requestMatchers(HttpMethod.GET)
+                // .permitAll()
                 .anyRequest()
                 .authenticated()
                 .and().exceptionHandling()
@@ -98,6 +104,20 @@ public class SecurityConfig {
         http.authenticationProvider(daoAuthenticationProvider());
         DefaultSecurityFilterChain defaultSecurityFilterChain = http.build();
 
+        
+        //Exception handling configuration
+        http.exceptionHandling().authenticationEntryPoint((request,response,e)->{
+            
+            response.setContentType("application/json;charset=UTF-8");
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            try {
+                response.getWriter().write(new JSONObject().put("data", null).put("message", "Access Denied").put("success", false).toString());
+            } catch (JSONException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            }
+        });
+        
         return defaultSecurityFilterChain;
     }
 

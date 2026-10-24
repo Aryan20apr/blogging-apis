@@ -15,9 +15,11 @@ public class CommentDto {
     private String content;
     
     private Date date;
+    
+    
 
-    private Integer userId;
-
+   private String firstname;
+   private String lastname;
 
     
 }

@@ -1,5 +1,6 @@
 package com.aryan.blogging.bloggingapis.payload;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -19,20 +20,22 @@ public class PostDto {
 
     private String content;
 
-    private String imageName = "default.png";// We can give defult image name. You can remove it
+    private String imageName;// We can give defult image name. You can remove it
 
     // We can take category id and user id here also or in URL
 
-    private Date addedDate;
+    private String imageUrl;
+    
+    private String addedDate;
 
     // If we use Category in place of CategoryDTO, we will run into error or
     // infinite recursion as both category and user have POST (Lists) which will
     // lead to the recursion
     private CategoryDTO category;
 
-    private UserDTO user;
+    private UserResponseDTO user;
 
-    private Set<CommentDto> comments = new HashSet<>();// With this we can get the comment of post with the post itself
+    //private Set<CommentDto> comments = new HashSet<>();// With this we can get the comment of post with the post itself
 
     public PostDto() {
         System.out.println("Inside default PostDto constructor");

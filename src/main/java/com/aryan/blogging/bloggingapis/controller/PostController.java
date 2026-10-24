@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-import javax.servlet.http.HttpServletResponse;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,11 +24,16 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.aryan.blogging.bloggingapis.payload.ApiResponse;
+import com.aryan.blogging.bloggingapis.payload.PostCreationDTO;
 import com.aryan.blogging.bloggingapis.payload.PostDto;
 import com.aryan.blogging.bloggingapis.payload.PostResponse;
+import com.aryan.blogging.bloggingapis.payload.UserPostDTO;
 import com.aryan.blogging.bloggingapis.services.FileService;
+import com.aryan.blogging.bloggingapis.services.MyBlobService;
 import com.aryan.blogging.bloggingapis.services.PostService;
 import com.aryan.blogging.bloggingapis.utils.Constants;
+
+import jakarta.servlet.http.HttpServletResponse;
 
 
 
@@ -38,32 +43,34 @@ public class PostController {
     @Autowired
     private PostService postService;
 
-    @Autowired
-    private FileService fileService;
+ 
 
     @Value("${project.image}")
     private String path;
 
-    @PostMapping("user/{userId}/category/{categoryId}/posts") // Currently we are taking these in URL, but if there are
+    @PostMapping("user/posts") // Currently we are taking these in URL, but if there are
                                                               // many params, then we would have to use anothe pattern
-    public ResponseEntity<PostDto> createPost(@RequestBody PostDto postDto, @PathVariable Integer userId,
-            @PathVariable Integer categoryId) {
+    public ResponseEntity<ApiResponse<PostCreationDTO>> createPost(@RequestBody PostDto postDto, @RequestParam Integer userId,
+            @RequestParam Integer categoryId) {
 
-        PostDto createPost = this.postService.createPost(postDto, userId, categoryId);
-        return new ResponseEntity<PostDto>(createPost, HttpStatus.CREATED);
+        PostCreationDTO createPost = this.postService.createPost(postDto, userId, categoryId);
+        ApiResponse<PostCreationDTO> apiResponse=new ApiResponse<PostCreationDTO>(createPost,"Post created successfully",true);
+        return new ResponseEntity<ApiResponse<PostCreationDTO>>(apiResponse, HttpStatus.CREATED);
     }
 
-    @GetMapping("/user/{userId}/posts")
-    public ResponseEntity<List<PostDto>> getPostByUser(@PathVariable Integer userId) {
-        List<PostDto> posts = this.postService.getPostByUser(userId);
-        // System.out.println("List of Posts is "+posts.toArray());
-        return new ResponseEntity<List<PostDto>>(posts, HttpStatus.OK);
+    @GetMapping("/userposts")
+    public ResponseEntity<ApiResponse<List<UserPostDTO>>> getPostByUser(@RequestParam Integer userId) {
+        List<UserPostDTO> posts = this.postService.getPostByUser(userId);
+        
+        ApiResponse<List<UserPostDTO>> apiResponse=new ApiResponse<>(posts,"Posts of the user are",true);
+        return new ResponseEntity<ApiResponse<List<UserPostDTO>>>(apiResponse, HttpStatus.OK);
     }
 
-    @GetMapping("/category/{categoryId}/posts")
-    public ResponseEntity<List<PostDto>> getPostByCategory(@PathVariable Integer categoryId) {
+    @GetMapping("/category/posts")
+    public ResponseEntity<ApiResponse<List<PostDto>>> getPostByCategory(@RequestParam Integer categoryId) {
         List<PostDto> posts = this.postService.getPostByCategory(categoryId);
-        return new ResponseEntity<List<PostDto>>(posts, HttpStatus.OK);
+        ApiResponse<List<PostDto>> apiResponse=new ApiResponse<>(posts,"Posts in the category",true);
+        return new ResponseEntity<ApiResponse<List<PostDto>>>(apiResponse, HttpStatus.OK);
     }
 
     // @GetMapping("/posts")
@@ -86,32 +93,37 @@ public class PostController {
     //     PostResponse posts = this.postService.getAllPosts(pageNumber,pageSize);
     //     return new ResponseEntity<PostResponse>(posts, HttpStatus.OK);
     // }
-    @GetMapping("/posts")
-    public ResponseEntity<PostResponse> getAllPosts(
+    @GetMapping(path="/posts")
+    public ResponseEntity<ApiResponse<PostResponse>> getAllPosts(
             @RequestParam(value = "pageNumber", defaultValue = Constants.PAGE_NUMBER, required = false) Integer pageNumber,
             @RequestParam(value = "pageSize", defaultValue = Constants.PAGE_SIZE, required = false) Integer pageSize,
             @RequestParam(value = "sortBy",defaultValue = Constants.SORT_BY,required = false)String sortBy,
             @RequestParam(value = "sortDir",defaultValue = Constants.SORT_DIR, required = false ) String sortDir ) {
         PostResponse posts = this.postService.getAllPosts(pageNumber,pageSize,sortBy,sortDir);
-        return new ResponseEntity<PostResponse>(posts, HttpStatus.OK);
+        ApiResponse<PostResponse> apiResponse=new ApiResponse<PostResponse>(posts,"Posts obtained",true);
+        return new ResponseEntity<ApiResponse<PostResponse>>(apiResponse, HttpStatus.OK);
     }
 
     @GetMapping("/posts/{postId}")
-    public ResponseEntity<PostDto> getAllPostById(@PathVariable Integer postId) {
+    public ResponseEntity<ApiResponse<PostDto>> getAllPostById(@PathVariable Integer postId) {
         PostDto post = this.postService.getPostById(postId);
-        return new ResponseEntity<PostDto>(post, HttpStatus.OK);
+        ApiResponse<PostDto> apiResponse=new ApiResponse<PostDto>(post,"Post obtained ",true);
+        return new ResponseEntity<ApiResponse<PostDto>>(apiResponse, HttpStatus.OK);
     }
 
-    @DeleteMapping("/delete/{postId}")
-    public ApiResponse deletePost(@PathVariable Integer postId) {
+    @DeleteMapping("post/delete")
+    public ResponseEntity<ApiResponse<Integer>> deletePost(@RequestParam Integer postId) {
         this.postService.deletePost(postId);
-        return new ApiResponse("Post is deleted successfully", true);
+        ApiResponse<Integer> apiResponse=new ApiResponse<Integer>(postId,"Post deleted ",true);
+        return new ResponseEntity<ApiResponse<Integer>>(apiResponse, HttpStatus.OK);
     }
 
-    @PutMapping("/update/{postId}")
-    public ApiResponse updatePost(@RequestBody PostDto postDto, @PathVariable Integer postId) {
-        this.postService.updatePost(postDto, postId);
-        return new ApiResponse("Post is updated successfully", true);
+    @PutMapping("/post/update")
+    public ResponseEntity<ApiResponse<PostCreationDTO>> updatePost(@RequestBody PostCreationDTO postDto, @RequestParam Integer postId,@RequestParam boolean iremoved){     
+       PostCreationDTO updatedPost= this.postService.updatePost(postDto, postId,iremoved);
+        
+        ApiResponse<PostCreationDTO> apiResponse=new ApiResponse<>(updatedPost,"Post updated successfully ",true);
+        return new ResponseEntity<ApiResponse<PostCreationDTO>>(apiResponse, HttpStatus.OK);
     }
 
     @GetMapping("/search")
@@ -122,25 +134,25 @@ public class PostController {
     // post image upload
 
 
-    @PostMapping("/post/image/upload/{postId}")//PostId to identify the post whose image is uploaded
-    private ResponseEntity<PostDto> uploadImage(@RequestParam("image") MultipartFile file, @PathVariable Integer postId) throws IOException
-    {
-        PostDto postDto=postService.getPostById(postId);
-        String fileName=fileService.uploadImage(path, file); 
-        
-        postDto.setImageName(fileName);
-        this.postService.updatePost(postDto, postId);
-        
-        return new ResponseEntity<PostDto>(postDto,HttpStatus.OK);
-    }
-    //Method to serve files
-    @GetMapping(path="/post/image/download/{imageName}",produces=MediaType.IMAGE_PNG_VALUE)
-     public void downloadFile(@PathVariable("imageName") String imageName,HttpServletResponse response) throws IOException
-    {
-     InputStream resource = this.fileService.getResource(path,imageName);
-     response.setContentType(MediaType.IMAGE_PNG_VALUE);//Specify the type of content to be sent in response
-     StreamUtils.copy(resource, response.getOutputStream());//Put the data obtained from InputStream to the output Stream
-    }
+//    @PostMapping("/post/image/upload/{postId}")//PostId to identify the post whose image is uploaded
+//    private ResponseEntity<PostDto> uploadImage(@RequestParam("image") MultipartFile file, @PathVariable Integer postId) throws IOException
+//    {
+//        PostDto postDto=postService.getPostById(postId);
+//        String fileName=fileService.uploadImage(path, file); 
+//        
+//        postDto.setImageName(fileName);
+//        this.postService.updatePost(postDto, postId,false);
+//        
+//        return new ResponseEntity<PostDto>(postDto,HttpStatus.OK);
+//    }
+//    //Method to serve files
+//    @GetMapping(path="/post/image/download/{imageName}",produces=MediaType.IMAGE_PNG_VALUE)
+//     public void downloadFile(@PathVariable("imageName") String imageName,HttpServletResponse response) throws IOException
+//    {
+//     InputStream resource = this.fileService.getResource(path,imageName);
+//     response.setContentType(MediaType.IMAGE_PNG_VALUE);//Specify the type of content to be sent in response
+//     StreamUtils.copy(resource, response.getOutputStream());//Put the data obtained from InputStream to the output Stream
+//    }
  
 
 }
