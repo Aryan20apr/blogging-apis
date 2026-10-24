@@ -1,9 +1,10 @@
 package com.aryan.blogging.bloggingapis.payload;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
@@ -41,5 +42,7 @@ public class UserDTO {
 	// @NotBlank
 	@Size(min = 20,max=150,message = "About cannot be less than 20 characters")
 	private String about;
+
+	private Set<RoleDTO> roles = new HashSet<>();
 
 }

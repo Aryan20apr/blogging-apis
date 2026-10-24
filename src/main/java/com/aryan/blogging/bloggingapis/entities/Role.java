@@ -1,8 +1,7 @@
 package com.aryan.blogging.bloggingapis.entities;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
+
 import javax.persistence.Id;
 
 import lombok.Getter;
@@ -14,8 +13,10 @@ import lombok.Setter;
 public class Role {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    // @GeneratedValue(strategy = GenerationType.IDENTITY)
+    // Id not required to be auto-generated as there will be maximum 2 roles normal
+    // and admin
     private int id;
-    // User 
-    private String name;//Role name
+    // User
+    private String name;// Role name
 }

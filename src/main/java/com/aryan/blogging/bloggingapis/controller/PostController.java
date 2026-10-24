@@ -23,12 +23,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.aryan.blogging.bloggingapis.config.Constants;
 import com.aryan.blogging.bloggingapis.payload.ApiResponse;
 import com.aryan.blogging.bloggingapis.payload.PostDto;
 import com.aryan.blogging.bloggingapis.payload.PostResponse;
 import com.aryan.blogging.bloggingapis.services.FileService;
 import com.aryan.blogging.bloggingapis.services.PostService;
+import com.aryan.blogging.bloggingapis.utils.Constants;
 
 
 
